@@ -35,6 +35,7 @@ kubernetes-state-checker:
   # Input values for this specific check
   values:
     serviceName: microservice-1
+    port: 5000
 ```
 
 ### Check environment in a pod
