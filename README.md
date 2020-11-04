@@ -22,3 +22,32 @@ From a developers point of view, this gives them a tool to check the layers unde
 From a DevOps/Infrastructure person’s point of view, this allows them to set up an expected state and enable other groups to check for that.  It also gives this group a tool where they can run to check the state which can help them eliminate what could possibly be wrong and look at other areas that this tool did not cover.
 
 
+## Example usage
+
+### Check Kubernetes service port
+
+```
+kubernetes-state-checker:
+- type: doesServicePortExist
+  name: Does microservice 1 have a kubernetes service with port 5000 exposed
+  description: This checks if microservice 1 has a Kubernetes service with port 5000 exposed
+  namespace: app
+  # Input values for this specific check
+  values:
+    serviceName: microservice-1
+```
+
+### Check environment in a pod
+
+```
+kubernetes-state-checker:
+- type: doesEnvarExistInDeployment
+  name: Check that the microservice 2 deployments has the correct envar for microservice 1
+  description: The microservice 2 uses the "MICROSERVICE_1_HOST_PORT" envar to find microservice 1.  This checks to make sure that this envar is there and set to the correct value.
+  Namespace: app
+  # Input values for this specific check
+  values:
+    deploymentName: microservice-2
+    envarKey: MICROSERVICE_1_HOST_PORT
+    envarValue: microservice-1:5000
+```
