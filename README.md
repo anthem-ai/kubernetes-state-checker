@@ -51,3 +51,15 @@ kubernetes-state-checker:
     envarKey: MICROSERVICE_1_HOST_PORT
     envarValue: microservice-1:5000
 ```
+
+### Check if a port is open
+Maybe even kube exec telnet/nc to test the connection
+
+
+## Open discussions
+
+### A more dynamic way to read configurations
+During a peer review of this document, there was an idea put out to see if we can read in configurations in a more dynamic way so that these configurations don't have to be in more than one place.  Taking our our microservice 1 and microservice 2 example from above.  The actual ports and envars are defined in each services Helm values files.  Then with this test, we once again have to define what ports maps to what.  This means that the same information is in two places now.  When someone wants to update the port for microservice 1, they would have to update it in microservice 1's Helm values and then go into the kubernetes-state-checker's check config yaml and change the value in there as well.  This make repetitive and tedious amount of work.
+
+We would like a way where we can tell this kubernetes-state-checker's check config yaml that here is the port that microservice-1 is listening on and here is the file and here is the envar that microservice-2 is using to reach that port.  These values should be the same.
+
