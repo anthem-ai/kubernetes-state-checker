@@ -6,7 +6,7 @@ import (
 
 type services struct {
 	namespace string
-	port int
+	port      int
 }
 
 type Results struct {
@@ -15,7 +15,7 @@ type Results struct {
 }
 
 // New New
-func New(namespace string, port int) services{
+func New(namespace string, port int) services {
 	s := services{namespace, port}
 	return s
 }
@@ -28,7 +28,5 @@ func (s services) DoesPortExist() Results {
 		DidPass: true,
 		Message: "Port found",
 	}
-
 	return testResult
 }
-

@@ -1,15 +1,15 @@
 package checker
 
 import (
-	"fmt"
 	"checks/kubernetes/services"
+	"fmt"
 )
 
 type check struct {
-	ttype string
-	name string
+	ttype       string
+	name        string
 	description string
-	namespace string
+	namespace   string
 }
 
 type results struct {

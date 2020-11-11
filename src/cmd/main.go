@@ -25,6 +25,6 @@ func main() {
 +----------------------------------------------------------------------+------+-------------+
 | %s | %s | %s  |
 +----------------------------------------------------------------------+------+-------------+`,
-name, strconv.FormatBool(results.DidPass), results.Message))
+		name, strconv.FormatBool(results.DidPass), results.Message))
 
 }
