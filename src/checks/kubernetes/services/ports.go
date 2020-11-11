@@ -14,8 +14,14 @@ type Results struct {
 	Message string
 }
 
+// New New
+func New(namespace string, port int) services{
+	s := services{namespace, port}
+	return s
+}
+
 // DoesPortExist DoesPortExist
-func DoesPortExist() Results {
+func (s services) DoesPortExist() Results {
 	fmt.Println("Running doesServicePortExist")
 
 	testResult := Results{

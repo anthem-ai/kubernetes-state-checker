@@ -19,7 +19,7 @@ type results struct {
 
 // New New
 func New(ttype string, name string, description string, namespace string) check {
-	c := check {ttype, name, description, namespace}
+	c := check{ttype, name, description, namespace}
 	return c
 }
 
@@ -31,11 +31,12 @@ func (c check) Run() results {
 
 	switch c.ttype {
 	case "doesServicePortExist":
-		checkResults := services.DoesPortExist()
+		t := services.New("app", 5000)
+		r := t.DoesPortExist()
 
 		returnResults = results{
-			DidPass: checkResults.DidPass,
-			Message: checkResults.Message,
+			DidPass: r.DidPass,
+			Message: r.Message,
 		}
 	}
 
