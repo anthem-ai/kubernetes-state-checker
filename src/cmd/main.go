@@ -13,11 +13,12 @@ func main() {
 	// Get input yaml with checks
 
 	// Execute the check runner
-	ttype := "doesServicePortExist"
-	name := "Does microservice 1 have a kubernetes service with port 5000 exposed"
-	description := "This checks if microservice 1 has a Kubernetes service with port 5000 exposed"
-	namespace := "app"
-	c := checker.New(ttype, name, description, namespace)
+	c := checker.New(
+		 "doesServicePortExist",
+		  "Does microservice 1 have a kubernetes service with port 5000 exposed",
+		  "This checks if microservice 1 has a Kubernetes service with port 5000 exposed",
+		  "app",
+	)
 	results := c.Run()
 
 	fmt.Println(fmt.Sprintf(`+----------------------------------------------------------------------+------+-------------+	
