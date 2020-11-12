@@ -89,7 +89,7 @@ The file: `../../../hos-core-authentication/.gitlab/auto-deploy-values.yaml`
 fullnameOverride: &name "hos-core-authentication"
 
 image:
-  repository: 627080838747.dkr.ecr.us-west-2.amazonaws.com/hos/hos-core-authentication
+  repository: 1234.dkr.ecr.us-west-2.amazonaws.com/hos/hos-core-authentication
   pullPolicy: Always
   tag: &tag dev
 
@@ -109,7 +109,7 @@ this is the source `.gitlab` values file:
 fullnameOverride: &name "hos-core-authentication"
 
 image:
-  repository: 627080838747.dkr.ecr.us-west-2.amazonaws.com/hos/hos-core-authentication
+  repository: 1234.dkr.ecr.us-west-2.amazonaws.com/hos/hos-core-authentication
   pullPolicy: Always
   tag: &tag dev
 
@@ -140,7 +140,7 @@ We can point it to any yaml file and it will find and only the `kubernetes-state
 fullnameOverride: &name "hos-core-authentication"
 
 image:
-  repository: 627080838747.dkr.ecr.us-west-2.amazonaws.com/hos/hos-core-authentication
+  repository: 1234.dkr.ecr.us-west-2.amazonaws.com/hos/hos-core-authentication
   pullPolicy: Always
   tag: &tag dev
 
@@ -153,13 +153,13 @@ some-other-yaml:
 
 kubernetes-state-checker:
 - type: doesServicePortExist
-  name: Does microservice 1 have a kubernetes service with port 5000 exposed
-  description: This checks if microservice 1 has a Kubernetes service with port 5000 exposed
+  name: Does hos-core-authentication have a kubernetes service with port 20004 exposed
+  description: This checks if hos-core-authentication has a Kubernetes service with port 20004 exposed
   namespace: app
   # Input values for this specific check
   values:
-    serviceName: microservice-1
-    port: 5000
+    serviceName: hos-core-authentication
+    port: 20004
 ```
 
 It will ignore all sections and just use the information in the `kubernetes-state-checker` section.
