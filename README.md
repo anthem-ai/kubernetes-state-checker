@@ -133,3 +133,34 @@ kubernetes-state-checker:
 
 ???
 
+[3] Be able to read from any yaml file with a `kubernetes-state-checker` section
+We can point it to any yaml file and it will find and only the `kubernetes-state-checker` section.
+
+```
+fullnameOverride: &name "hos-core-authentication"
+
+image:
+  repository: 627080838747.dkr.ecr.us-west-2.amazonaws.com/hos/hos-core-authentication
+  pullPolicy: Always
+  tag: &tag dev
+
+service:
+  port: 20004
+  targetPort: 20004
+
+some-other-yaml:
+  foo: bar
+
+kubernetes-state-checker:
+- type: doesServicePortExist
+  name: Does microservice 1 have a kubernetes service with port 5000 exposed
+  description: This checks if microservice 1 has a Kubernetes service with port 5000 exposed
+  namespace: app
+  # Input values for this specific check
+  values:
+    serviceName: microservice-1
+    port: 5000
+```
+
+It will ignore all sections and just use the information in the `kubernetes-state-checker` section.
+
