@@ -64,3 +64,72 @@ During a peer review of this document, there was an idea put out to see if we ca
 
 We would like a way where we can tell this kubernetes-state-checker's check config yaml that here is the port that microservice-1 is listening on and here is the file and here is the envar that microservice-2 is using to reach that port.  These values should be the same.
 
+#### Proposed solutions:
+
+[1] The input yaml can have template like parameters in there to tell it where to get the information for a values from
+
+This method keeps the kubernetes-state-checker generic.  It doesn't have knowledge of a data structure that is outside it's
+domain.  We are simply pointing the value(s) to be sourced from another file.
+
+
+```
+kubernetes-state-checker:
+- type: doesServicePortExist
+  name: Does microservice 1 have a kubernetes service with port 5000 exposed
+  description: This checks if microservice 1 has a Kubernetes service with port 5000 exposed
+  namespace: app
+  # Input values for this specific check
+  values:
+    serviceName: microservice-1
+    port: {{FromFile: ../../../hos-core-authentication/.gitlab/auto-deploy-values.yaml, field: service.port}}
+```
+
+The file: `../../../hos-core-authentication/.gitlab/auto-deploy-values.yaml`
+```
+fullnameOverride: &name "hos-core-authentication"
+
+image:
+  repository: 627080838747.dkr.ecr.us-west-2.amazonaws.com/hos/hos-core-authentication
+  pullPolicy: Always
+  tag: &tag dev
+
+service:
+  port: 20004
+  targetPort: 20004
+...
+...
+```
+
+[2] The kubernetes-state-checker knows the format of the gitlab pipeline
+
+This method requires the kubernetes-state-checker to have some knowledge of the source parameter's data structure.  For example
+this is the source `.gitlab` values file:
+
+```
+fullnameOverride: &name "hos-core-authentication"
+
+image:
+  repository: 627080838747.dkr.ecr.us-west-2.amazonaws.com/hos/hos-core-authentication
+  pullPolicy: Always
+  tag: &tag dev
+
+service:
+  port: 20004
+  targetPort: 20004
+```
+
+This would be the kubernetes-state-checker's input yaml file:
+
+```
+kubernetes-state-checker:
+- type: doesServicePortExist
+  name: Does microservice 1 have a kubernetes service with port 5000 exposed
+  description: This checks if microservice 1 has a Kubernetes service with port 5000 exposed
+  namespace: app
+  # Input values for this specific check
+  values:
+    {{FromFile: ../../../hos-core-authentication/.gitlab/auto-deploy-values.yaml}}
+```
+
+???
+
