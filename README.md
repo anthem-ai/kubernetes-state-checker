@@ -66,74 +66,7 @@ We would like a way where we can tell this kubernetes-state-checker's check conf
 
 #### Proposed solutions:
 
-[1] The input yaml can have template like parameters in there to tell it where to get the information for a values from
-
-This method keeps the kubernetes-state-checker generic.  It doesn't have knowledge of a data structure that is outside it's
-domain.  We are simply pointing the value(s) to be sourced from another file.
-
-
-```
-kubernetes-state-checker:
-- type: doesServicePortExist
-  name: Does microservice 1 have a kubernetes service with port 5000 exposed
-  description: This checks if microservice 1 has a Kubernetes service with port 5000 exposed
-  namespace: app
-  # Input values for this specific check
-  values:
-    serviceName: microservice-1
-    port: {{FromFile: ../../../hos-core-authentication/.gitlab/auto-deploy-values.yaml, field: service.port}}
-```
-
-The file: `../../../hos-core-authentication/.gitlab/auto-deploy-values.yaml`
-```
-fullnameOverride: &name "hos-core-authentication"
-
-image:
-  repository: 1234.dkr.ecr.us-west-2.amazonaws.com/hos/hos-core-authentication
-  pullPolicy: Always
-  tag: &tag dev
-
-service:
-  port: 20004
-  targetPort: 20004
-...
-...
-```
-
-[2] The kubernetes-state-checker knows the format of the gitlab pipeline
-
-This method requires the kubernetes-state-checker to have some knowledge of the source parameter's data structure.  For example
-this is the source `.gitlab` values file:
-
-```
-fullnameOverride: &name "hos-core-authentication"
-
-image:
-  repository: 1234.dkr.ecr.us-west-2.amazonaws.com/hos/hos-core-authentication
-  pullPolicy: Always
-  tag: &tag dev
-
-service:
-  port: 20004
-  targetPort: 20004
-```
-
-This would be the kubernetes-state-checker's input yaml file:
-
-```
-kubernetes-state-checker:
-- type: doesServicePortExist
-  name: Does microservice 1 have a kubernetes service with port 5000 exposed
-  description: This checks if microservice 1 has a Kubernetes service with port 5000 exposed
-  namespace: app
-  # Input values for this specific check
-  values:
-    {{FromFile: ../../../hos-core-authentication/.gitlab/auto-deploy-values.yaml}}
-```
-
-???
-
-[3] Be able to read from any yaml file with a `kubernetes-state-checker` section
+Be able to read from any yaml file with a `kubernetes-state-checker` section
 We can point it to any yaml file and it will find and only the `kubernetes-state-checker` section.
 
 ```
