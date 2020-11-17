@@ -64,3 +64,36 @@ During a peer review of this document, there was an idea put out to see if we ca
 
 We would like a way where we can tell this kubernetes-state-checker's check config yaml that here is the port that microservice-1 is listening on and here is the file and here is the envar that microservice-2 is using to reach that port.  These values should be the same.
 
+#### Proposed solutions:
+
+Be able to read from any yaml file with a `kubernetes-state-checker` section
+We can point it to any yaml file and it will find and only the `kubernetes-state-checker` section.
+
+```
+fullnameOverride: &name "hos-core-authentication"
+
+image:
+  repository: 1234.dkr.ecr.us-west-2.amazonaws.com/hos/hos-core-authentication
+  pullPolicy: Always
+  tag: &tag dev
+
+service:
+  port: 20004
+  targetPort: 20004
+
+some-other-yaml:
+  foo: bar
+
+kubernetes-state-checker:
+- type: doesServicePortExist
+  name: Does hos-core-authentication have a kubernetes service with port 20004 exposed
+  description: This checks if hos-core-authentication has a Kubernetes service with port 20004 exposed
+  namespace: app
+  # Input values for this specific check
+  values:
+    serviceName: hos-core-authentication
+    port: 20004
+```
+
+It will ignore all sections and just use the information in the `kubernetes-state-checker` section.
+
