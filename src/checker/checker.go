@@ -5,11 +5,12 @@ import (
 	"fmt"
 )
 
-type check struct {
-	ttype       string
-	name        string
-	description string
-	namespace   string
+type Check struct {
+	Ttype       string      `yaml:"ttype"`
+	Name        string      `yaml:"name"`
+	Description string      `yaml:"description"`
+	Namespace   string      `yaml:"namespace"`
+	Values      interface{} `yaml:"values"`
 }
 
 type results struct {
@@ -18,18 +19,18 @@ type results struct {
 }
 
 // New New
-func New(ttype string, name string, description string, namespace string) check {
-	c := check{ttype, name, description, namespace}
+func New(ttype string, name string, description string, namespace string, values interface{}) Check {
+	c := Check{ttype, name, description, namespace, values}
 	return c
 }
 
 // Run - runner
-func (c check) Run() results {
+func (c Check) Run() results {
 	fmt.Println("Starting runner ")
 
 	var returnResults results
 
-	switch c.ttype {
+	switch c.Ttype {
 	case "doesServicePortExist":
 		t := services.New("app", 5000)
 		r := t.DoesPortExist()

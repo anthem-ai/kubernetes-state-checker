@@ -4,6 +4,11 @@ import (
 	"fmt"
 )
 
+type values struct {
+	serviceName string `yaml:"serviceName"`
+	port        int    `yaml:"port"`
+}
+
 type services struct {
 	namespace string
 	port      int
