@@ -10,7 +10,7 @@ kubernetes-state-checker:
   # Input values for this specific check
   values:
     serviceName: microservice-1
-    port: 5000
+    port: "5000"
 - ttype: doesEnvarExistInDeployment
   name: Check that the microservice 2 deployments has the correct envar for microservice 1
   description: The microservice 2 uses the "MICROSERVICE_1_HOST_PORT" envar to find microservice 1.  This checks to make sure that this envar is there and set to the correct value.

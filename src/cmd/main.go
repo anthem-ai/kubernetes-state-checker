@@ -16,14 +16,6 @@ type conf struct {
 	KubernetesStateChecker []checker.Check `yaml:"kubernetes-state-checker"`
 }
 
-// type KubernetesStateChecker struct {
-// 	Ttype       string      `yaml:"ttype"`
-// 	Name        string      `yaml:"name"`
-// 	Description string      `yaml:"description"`
-// 	Namespace   string      `yaml:"namespace"`
-// 	Values      interface{} `yaml:"values"`
-// }
-
 func (c *conf) getConf() *conf {
 
 	yamlFile, err := ioutil.ReadFile("conf.yaml")

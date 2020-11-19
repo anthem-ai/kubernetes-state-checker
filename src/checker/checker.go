@@ -1,7 +1,7 @@
 package checker
 
 import (
-	"checks/kubernetes/services"
+	"checks/kubernetes/services/ports"
 	"fmt"
 )
 
@@ -32,8 +32,8 @@ func (c Check) Run() results {
 
 	switch c.Ttype {
 	case "doesServicePortExist":
-		t := services.New("app", 5000)
-		r := t.DoesPortExist()
+		check := ports.New(c.Name, c.Namespace, c.Values)
+		r := check.DoesPortExist()
 
 		returnResults = results{
 			DidPass: r.DidPass,
