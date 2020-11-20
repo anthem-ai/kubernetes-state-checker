@@ -2,12 +2,18 @@ package main
 
 import (
 	"checker"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"path/filepath"
 	"strconv"
 
 	yaml "gopkg.in/yaml.v2"
+
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/client-go/util/homedir"
 )
 
 type conf struct {
@@ -33,6 +39,26 @@ func (c *conf) getConf() *conf {
 func main() {
 
 	// Get kubeconfig
+	// kubeconfig setup example: https://github.com/kubernetes/client-go/blob/master/examples/out-of-cluster-client-configuration/main.go
+	var kubeconfig *string
+	if home := homedir.HomeDir(); home != "" {
+		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
+	} else {
+		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
+	}
+	flag.Parse()
+
+	// use the current context in kubeconfig
+	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	// create the clientset
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		panic(err.Error())
+	}
 
 	// Get input yaml with checks
 	var c conf
@@ -42,6 +68,7 @@ func main() {
 
 		// Execute the check runner
 		chk := checker.New(
+			clientset,
 			aCheck.Ttype,
 			aCheck.Name,
 			aCheck.Description,
