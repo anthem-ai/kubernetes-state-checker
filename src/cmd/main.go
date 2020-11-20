@@ -7,7 +7,9 @@ import (
 	"io/ioutil"
 	"log"
 	"path/filepath"
+	"reflect"
 	"strconv"
+	"unsafe"
 
 	yaml "gopkg.in/yaml.v2"
 
@@ -66,8 +68,57 @@ func main() {
 
 	for _, aCheck := range c.KubernetesStateChecker {
 
+		// convert to yaml
+		valuesYaml, err := yaml.Marshal(aCheck)
+		if err != nil {
+			panic(err.Error())
+		}
+		// fmt.Println("--------")
+		// fmt.Println(BytesToString(out))
+		// fmt.Println("--------")
+
+		// type againStruct struct {
+		// 	// ServiceName string `yaml:"serviceName"`
+		// 	// Port        int64  `yaml:"port"`
+		// 	Ttype  string `yaml:"ttype",omitempty`
+		// 	Name   string `yaml:"name"`
+		// 	Values struct {
+		// 		Port        int64  `yaml:"port"`
+		// 		ServiceName string `yaml:"serviceName"`
+		// 	} `yaml:"values"`
+		// }
+
+		// // b := []byte(BytesToString(out))
+		// myString := `ttype: foo`
+		// fmt.Println(myString)
+
+		// // myString := []byte(`ttype: foo`)
+
+		// b := []byte(myString)
+		// // fmt.Println(b)
+
+		// // testing parsing it again
+		// var again againStruct
+		// // You need to pass the output in with & or it will probably throw some errors
+		// err = yaml.Unmarshal(b, &again)
+		// if err != nil {
+		// 	log.Fatalf("Unmarshal: %v", err)
+		// }
+
+		// fmt.Println("xxxxxxxxx")
+		// fmt.Println(again.Ttype)
+		// fmt.Println("xxxxxxxxx")
+
+		// var testYaml againStruct
+		// err = yaml.Unmarshal(out, &testYaml)
+		// fmt.Println("oooooooooo")
+		// fmt.Println(testYaml.Ttype)
+		// fmt.Println(testYaml.Values.ServiceName)
+		// fmt.Println("oooooooooo")
+
 		// Execute the check runner
 		chk := checker.New(
+			BytesToString(valuesYaml),
 			clientset,
 			aCheck.Ttype,
 			aCheck.Name,
@@ -86,4 +137,10 @@ func main() {
 
 	}
 
+}
+
+func BytesToString(b []byte) string {
+	bh := (*reflect.SliceHeader)(unsafe.Pointer(&b))
+	sh := reflect.StringHeader{bh.Data, bh.Len}
+	return *(*string)(unsafe.Pointer(&sh))
 }

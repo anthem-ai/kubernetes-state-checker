@@ -3,17 +3,19 @@ package ports
 import (
 	"context"
 	"fmt"
-	"reflect"
+	"log"
 
+	"gopkg.in/yaml.v2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 )
 
+var kubeClientSet *kubernetes.Clientset
+
 type inputs struct {
-	clientSet   *kubernetes.Clientset
-	checkName   string
-	namespace   string
-	checkValues map[string]string
+	valuesYaml string
+	checkName  string
+	namespace  string
 }
 
 type Results struct {
@@ -22,31 +24,37 @@ type Results struct {
 }
 
 // New New
-func New(clientSet *kubernetes.Clientset, checkName string, namespace string, checkValues interface{}) inputs {
-	s := inputs{clientSet, checkName, namespace, parseInputInterface(checkValues)}
+func New(valuesYaml string, clientSet *kubernetes.Clientset, checkName string, namespace string) inputs {
+	s := inputs{valuesYaml, checkName, namespace}
+	kubeClientSet = clientSet
+
 	return s
 }
 
-func parseInputInterface(m interface{}) map[string]string {
-	var extractedValues = make(map[string]string)
-
-	v := reflect.ValueOf(m)
-
-	if v.Kind() == reflect.Map {
-		for _, key := range v.MapKeys() {
-			strct := v.MapIndex(key)
-			fmt.Println(key.Interface(), "::", strct.Interface())
-			extractedValues[fmt.Sprintf(key.Interface().(string))] = fmt.Sprintf(string(strct.Interface().(string)))
-		}
-	}
-
-	return extractedValues
+type doesPortExistStruct struct {
+	Values struct {
+		ServiceName string `yaml:"serviceName"`
+		Port        int32  `yaml:"port"`
+	} `yaml:"values"`
 }
 
 // DoesPortExist DoesPortExist
 func (i inputs) DoesPortExist() Results {
+
+	var values doesPortExistStruct
+
+	fmt.Println("xxxxx")
+	fmt.Println(i.valuesYaml)
+	fmt.Println("xxxxx")
+
+	err := yaml.Unmarshal([]byte(i.valuesYaml), &values)
+	if err != nil {
+		log.Fatalf("Unmarshal: %v", err)
+	}
+
 	fmt.Println("Running :" + i.checkName)
-	fmt.Println("Checking port: " + i.checkValues["port"])
+	fmt.Println("Checking port: " + fmt.Sprint(values.Values.Port))
+	fmt.Println("xxxxx")
 
 	// Set initial check results
 	checkResult := Results{
@@ -55,20 +63,19 @@ func (i inputs) DoesPortExist() Results {
 	}
 
 	// Run kube stuff
-	services, err := i.clientSet.CoreV1().Services(i.namespace).List(context.TODO(), metav1.ListOptions{})
+	services, err := kubeClientSet.CoreV1().Services(i.namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		panic(err.Error())
 	}
 
 	for _, aService := range services.Items {
 
-		if aService.ObjectMeta.Name == i.checkValues["serviceName"] {
+		if aService.ObjectMeta.Name == values.Values.ServiceName {
 			fmt.Println("Found service: " + aService.ObjectMeta.Name)
 
 			for _, port := range aService.Spec.Ports {
-				fmt.Println(fmt.Sprint(port.Port) + " : " + string(i.checkValues["port"]))
-				if fmt.Sprint(port.Port) == string(i.checkValues["port"]) {
-					fmt.Println("Found port: " + i.checkValues["port"])
+				if port.Port == values.Values.Port {
+					fmt.Println("Found port: " + fmt.Sprint(values.Values.Port))
 
 					checkResult.DidPass = true
 					checkResult.Message = "Port found"

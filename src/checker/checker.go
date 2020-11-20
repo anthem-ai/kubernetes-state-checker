@@ -7,8 +7,11 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
+var kubeClientSet *kubernetes.Clientset
+
 type Check struct {
-	ClientSet   *kubernetes.Clientset
+	valuesYaml string `yaml:"checkYaml"`
+	// ClientSet   *kubernetes.Clientset
 	Ttype       string      `yaml:"ttype"`
 	Name        string      `yaml:"name"`
 	Description string      `yaml:"description"`
@@ -22,8 +25,9 @@ type results struct {
 }
 
 // New New
-func New(clientSet *kubernetes.Clientset, ttype string, name string, description string, namespace string, values interface{}) Check {
-	c := Check{clientSet, ttype, name, description, namespace, values}
+func New(valuesYaml string, clientSet *kubernetes.Clientset, ttype string, name string, description string, namespace string, values interface{}) Check {
+	c := Check{valuesYaml, ttype, name, description, namespace, values}
+	kubeClientSet = clientSet
 	return c
 }
 
@@ -35,7 +39,7 @@ func (c Check) Run() results {
 
 	switch c.Ttype {
 	case "doesServicePortExist":
-		check := ports.New(c.ClientSet, c.Name, c.Namespace, c.Values)
+		check := ports.New(c.valuesYaml, kubeClientSet, c.Name, c.Namespace)
 		r := check.DoesPortExist()
 
 		returnResults = results{
