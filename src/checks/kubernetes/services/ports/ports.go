@@ -59,7 +59,7 @@ func (i inputs) DoesPortExist() Results {
 	// Set initial check results
 	checkResult := Results{
 		DidPass: false,
-		Message: "Port not found",
+		Message: "Port not found: " + fmt.Sprint(values.Values.Port),
 	}
 
 	// Run kube stuff
@@ -78,7 +78,7 @@ func (i inputs) DoesPortExist() Results {
 					fmt.Println("Found port: " + fmt.Sprint(values.Values.Port))
 
 					checkResult.DidPass = true
-					checkResult.Message = "Port found"
+					checkResult.Message = "Port found: " + fmt.Sprint(values.Values.Port)
 				}
 			}
 		}
