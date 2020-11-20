@@ -43,18 +43,10 @@ func (i inputs) DoesPortExist() Results {
 
 	var values doesPortExistStruct
 
-	fmt.Println("xxxxx")
-	fmt.Println(i.valuesYaml)
-	fmt.Println("xxxxx")
-
 	err := yaml.Unmarshal([]byte(i.valuesYaml), &values)
 	if err != nil {
 		log.Fatalf("Unmarshal: %v", err)
 	}
-
-	fmt.Println("Running :" + i.checkName)
-	fmt.Println("Checking port: " + fmt.Sprint(values.Values.Port))
-	fmt.Println("xxxxx")
 
 	// Set initial check results
 	checkResult := Results{
