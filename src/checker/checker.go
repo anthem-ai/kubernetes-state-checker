@@ -10,8 +10,7 @@ import (
 var kubeClientSet *kubernetes.Clientset
 
 type Check struct {
-	valuesYaml string `yaml:"checkYaml"`
-	// ClientSet   *kubernetes.Clientset
+	valuesYaml  string      `yaml:"checkYaml"`
 	Ttype       string      `yaml:"ttype"`
 	Name        string      `yaml:"name"`
 	Description string      `yaml:"description"`
