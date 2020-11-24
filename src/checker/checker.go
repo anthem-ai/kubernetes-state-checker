@@ -1,15 +1,21 @@
 package checker
 
 import (
-	"checks/kubernetes/services"
+	"checks/kubernetes/services/ports"
 	"fmt"
+
+	"k8s.io/client-go/kubernetes"
 )
 
-type check struct {
-	ttype       string
-	name        string
-	description string
-	namespace   string
+var kubeClientSet *kubernetes.Clientset
+
+type Check struct {
+	valuesYaml  string      `yaml:"checkYaml"`
+	Ttype       string      `yaml:"ttype"`
+	Name        string      `yaml:"name"`
+	Description string      `yaml:"description"`
+	Namespace   string      `yaml:"namespace"`
+	Values      interface{} `yaml:"values"`
 }
 
 type results struct {
@@ -18,21 +24,22 @@ type results struct {
 }
 
 // New New
-func New(ttype string, name string, description string, namespace string) check {
-	c := check{ttype, name, description, namespace}
+func New(valuesYaml string, clientSet *kubernetes.Clientset, ttype string, name string, description string, namespace string, values interface{}) Check {
+	c := Check{valuesYaml, ttype, name, description, namespace, values}
+	kubeClientSet = clientSet
 	return c
 }
 
 // Run - runner
-func (c check) Run() results {
+func (c Check) Run() results {
 	fmt.Println("Starting runner ")
 
 	var returnResults results
 
-	switch c.ttype {
+	switch c.Ttype {
 	case "doesServicePortExist":
-		t := services.New("app", 5000)
-		r := t.DoesPortExist()
+		check := ports.New(c.valuesYaml, kubeClientSet, c.Name, c.Namespace)
+		r := check.DoesPortExist()
 
 		returnResults = results{
 			DidPass: r.DidPass,
