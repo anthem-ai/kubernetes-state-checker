@@ -2,6 +2,7 @@ package ports
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 
@@ -38,12 +39,32 @@ type doesPortExistStruct struct {
 	} `yaml:"values"`
 }
 
+func doesPortExistParse(valuesYaml string, v *doesPortExistStruct) error {
+
+	err := yaml.Unmarshal([]byte(valuesYaml), &v)
+	if err != nil {
+		log.Fatalf("Unmarshal: %v", err)
+	}
+
+	// Probably have to check if ServiceName even exist first!!
+
+	if v.Values.ServiceName == "" {
+		return errors.New("Check values: invalid `ServiceName`")
+	}
+
+	if v.Values.Port == 0 {
+		return errors.New("Check values: invalid `Port`")
+	}
+
+	return nil
+}
+
 // DoesPortExist DoesPortExist
 func (i inputs) DoesPortExist() Results {
 
 	var values doesPortExistStruct
 
-	err := yaml.Unmarshal([]byte(i.valuesYaml), &values)
+	err := doesPortExistParse(i.valuesYaml, &values)
 	if err != nil {
 		log.Fatalf("Unmarshal: %v", err)
 	}
