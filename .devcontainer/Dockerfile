@@ -93,3 +93,10 @@ RUN wget https://releases.hashicorp.com/terraform/0.12.28/terraform_0.12.28_linu
 # RUN apt-get -y install zip
 RUN unzip terraform_0.12.28_linux_amd64.zip
 RUN cp /tmp/terraform /usr/local/bin/terraform
+
+# Install kubectl
+RUN sudo apt-get update && sudo apt-get install -y apt-transport-https gnupg2 curl
+RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+RUN echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+RUN sudo apt-get update
+RUN sudo apt-get install -y kubectl
