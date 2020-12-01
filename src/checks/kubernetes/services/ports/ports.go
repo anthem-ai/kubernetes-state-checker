@@ -46,8 +46,6 @@ func doesPortExistParse(valuesYaml string, v *doesPortExistStruct) error {
 		log.Fatalf("Unmarshal: %v", err)
 	}
 
-	// Probably have to check if ServiceName even exist first!!
-
 	if v.Values.ServiceName == "" {
 		return errors.New("Check values: invalid `ServiceName`")
 	}
