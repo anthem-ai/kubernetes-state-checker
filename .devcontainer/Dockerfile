@@ -86,12 +86,3 @@ ENV GO111MODULE=auto
 
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=dialog
-
-# Installing dependencies
-RUN GO111MODULE=on go get -v \
-gopkg.in/yaml.v2 \
-k8s.io/apimachinery/pkg/api/errors \
-k8s.io/apimachinery/pkg/apis/meta/v1 \
-k8s.io/client-go/kubernetes \
-k8s.io/client-go/tools/clientcmd \
-k8s.io/client-go/util/homedir
