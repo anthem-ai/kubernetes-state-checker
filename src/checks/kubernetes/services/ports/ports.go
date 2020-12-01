@@ -51,7 +51,7 @@ func doesPortExistParse(valuesYaml string, v *doesPortExistStruct) error {
 	}
 
 	if v.Values.Port == 0 {
-		return errors.New("Check values: invalid `Port`")
+		return errors.New("Check values: no `Port` set")
 	}
 
 	if v.Values.Port < 1 || v.Values.Port > 65353 {
