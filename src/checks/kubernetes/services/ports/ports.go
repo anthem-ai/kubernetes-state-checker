@@ -64,7 +64,7 @@ func (i inputs) DoesPortExist() Results {
 
 	err := doesPortExistParse(i.valuesYaml, &values)
 	if err != nil {
-		log.Fatalf("Unmarshal: %v", err)
+		log.Fatalf("Parse Error: %v", err)
 	}
 
 	// Set initial check results
