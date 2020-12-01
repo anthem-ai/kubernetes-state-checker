@@ -27,5 +27,10 @@
 	// "postCreateCommand": "go version",
 
 	// Comment out the next line to run as root
-	"remoteUser": "vscode"
+	"remoteUser": "vscode",
+
+	"mounts": [
+		// Mounting local kubeconfig into the container
+		"source=${localEnv:HOME}/.kube/config,target=/home/vscode/.kube/config,type=bind,consistency=cached"
+	  ]
 }

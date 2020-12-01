@@ -116,8 +116,5 @@ go get k8s.io/client-go/tools/clientcmd
 go get k8s.io/client-go/util/homedir
 ```
 
-Add in a kubeconfig that you want to use:
-```
-mkdir /home/vscode/.kube
-vi touch /home/vscode/.kube/config
-```
+## Kubeconfig
+The `.devcontainer/devcontainer.json` file specifies a local mount from your `$HOME/.kube/config` into the `$HOME/.kube/config` inside the container.
