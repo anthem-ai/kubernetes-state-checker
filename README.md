@@ -105,3 +105,19 @@ This is based on this example: https://github.com/microsoft/vscode-remote-try-go
 You will have to install the ` Visual Studio Code Remote - Containers extension`: https://code.visualstudio.com/docs/remote/containers#_getting-started
 
 Once you install this, and restart VScode in this repository, it will ask if you want to open it in a container.  The first time you do this, it will take some time since it is building the container based on the Dockerfile in the `.devcontainer` directory.  After it builds the container, it will open this project inside of this container and you can code away as normal.
+
+Install the go dependencies:
+```
+go get gopkg.in/yaml.v2
+go get k8s.io/apimachinery/pkg/api/errors
+go get k8s.io/apimachinery/pkg/apis/meta/v1
+go get k8s.io/client-go/kubernetes
+go get k8s.io/client-go/tools/clientcmd
+go get k8s.io/client-go/util/homedir
+```
+
+Add in a kubeconfig that you want to use:
+```
+mkdir /home/vscode/.kube
+vi touch /home/vscode/.kube/config
+```
