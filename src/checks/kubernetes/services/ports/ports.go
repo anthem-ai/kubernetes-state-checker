@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 
 	"gopkg.in/yaml.v2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -43,11 +42,15 @@ func doesPortExistParse(valuesYaml string, v *doesPortExistStruct) error {
 
 	err := yaml.Unmarshal([]byte(valuesYaml), &v)
 	if err != nil {
-		return errors.New("YAML Parse Error: "+err)
+		return errors.New(fmt.Sprintf("YAML Parse Error: %v", err))
 	}
 
 	if v.Values.ServiceName == "" {
 		return errors.New("Check values: no `ServiceName` set")
+	}
+
+	if v.Values.Port == 0 {
+		return errors.New("Check values: no `Port` set")
 	}
 
 	if v.Values.Port < 1 || v.Values.Port > 65353 {
