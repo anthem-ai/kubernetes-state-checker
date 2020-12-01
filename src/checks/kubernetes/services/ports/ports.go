@@ -2,8 +2,8 @@ package ports
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"log"
 
 	"gopkg.in/yaml.v2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -38,15 +38,28 @@ type doesPortExistStruct struct {
 	} `yaml:"values"`
 }
 
+func doesPortExistParse(valuesYaml string, v *doesPortExistStruct) error {
+
+	err := yaml.Unmarshal([]byte(valuesYaml), &v)
+	if err != nil {
+		return errors.New(fmt.Sprintf("YAML Parse Error: %v", err))
+	}
+
+	if v.Values.ServiceName == "" {
+		return errors.New("Check values: no `ServiceName` set")
+	}
+
+	if v.Values.Port < 1 || v.Values.Port > 65353 {
+		return errors.New("Check values: invalid `Port` specified, allowed range (1 - 65353)")
+	}
+
+	return nil
+}
+
 // DoesPortExist DoesPortExist
 func (i inputs) DoesPortExist() Results {
 
 	var values doesPortExistStruct
-
-	err := yaml.Unmarshal([]byte(i.valuesYaml), &values)
-	if err != nil {
-		log.Fatalf("Unmarshal: %v", err)
-	}
 
 	// Set initial check results
 	checkResult := Results{
@@ -54,23 +67,31 @@ func (i inputs) DoesPortExist() Results {
 		Message: "Port not found: " + fmt.Sprint(values.Values.Port),
 	}
 
-	// Run kube stuff
-	services, err := kubeClientSet.CoreV1().Services(i.namespace).List(context.TODO(), metav1.ListOptions{})
+	didValuesParse := false
+
+	err := doesPortExistParse(i.valuesYaml, &values)
 	if err != nil {
-		panic(err.Error())
+		didValuesParse = true
+		checkResult.Message = fmt.Sprintf("%v", err)
 	}
 
-	for _, aService := range services.Items {
+	if !didValuesParse {
+		// Run kube stuff
+		services, err := kubeClientSet.CoreV1().Services(i.namespace).List(context.TODO(), metav1.ListOptions{})
+		if err != nil {
+			panic(err.Error())
+		}
 
-		if aService.ObjectMeta.Name == values.Values.ServiceName {
-			fmt.Println("Found service: " + aService.ObjectMeta.Name)
+		for _, aService := range services.Items {
 
-			for _, port := range aService.Spec.Ports {
-				if port.Port == values.Values.Port {
-					fmt.Println("Found port: " + fmt.Sprint(values.Values.Port))
+			if aService.ObjectMeta.Name == values.Values.ServiceName {
 
-					checkResult.DidPass = true
-					checkResult.Message = "Port found: " + fmt.Sprint(values.Values.Port)
+				for _, port := range aService.Spec.Ports {
+					if port.Port == values.Values.Port {
+
+						checkResult.DidPass = true
+						checkResult.Message = "Port found: " + fmt.Sprint(values.Values.Port)
+					}
 				}
 			}
 		}
