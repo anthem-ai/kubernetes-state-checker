@@ -47,7 +47,7 @@ func doesPortExistParse(valuesYaml string, v *doesPortExistStruct) error {
 	}
 
 	if v.Values.ServiceName == "" {
-		return errors.New("Check values: invalid `ServiceName`")
+		return errors.New("Check values: no `ServiceName` set")
 	}
 
 	if v.Values.Port == 0 {
