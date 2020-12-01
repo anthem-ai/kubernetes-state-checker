@@ -97,3 +97,11 @@ kubernetes-state-checker:
 
 It will ignore all sections and just use the information in the `kubernetes-state-checker` section.
 
+# Running this in VScode
+This has the configuration files that helps you bring up the enviroment you need to develop against this locally via a Docker container.
+
+This is based on this example: https://github.com/microsoft/vscode-remote-try-go
+
+You will have to install the ` Visual Studio Code Remote - Containers extension`: https://code.visualstudio.com/docs/remote/containers#_getting-started
+
+Once you install this, and restart VScode in this repository, it will ask if you want to open it in a container.  The first time you do this, it will take some time since it is building the container based on the Dockerfile in the `.devcontainer` directory.  After it builds the container, it will open this project inside of this container and you can code away as normal.

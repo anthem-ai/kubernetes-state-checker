@@ -87,9 +87,11 @@ ENV GO111MODULE=auto
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=dialog
 
-# Install Terraform
-WORKDIR /tmp
-RUN wget https://releases.hashicorp.com/terraform/0.12.28/terraform_0.12.28_linux_amd64.zip
-# RUN apt-get -y install zip
-RUN unzip terraform_0.12.28_linux_amd64.zip
-RUN cp /tmp/terraform /usr/local/bin/terraform
+# Installing dependencies
+RUN GO111MODULE=on go get -v \
+gopkg.in/yaml.v2 \
+k8s.io/apimachinery/pkg/api/errors \
+k8s.io/apimachinery/pkg/apis/meta/v1 \
+k8s.io/client-go/kubernetes \
+k8s.io/client-go/tools/clientcmd \
+k8s.io/client-go/util/homedir
