@@ -43,7 +43,7 @@ func doesPortExistParse(valuesYaml string, v *doesPortExistStruct) error {
 
 	err := yaml.Unmarshal([]byte(valuesYaml), &v)
 	if err != nil {
-		log.Fatalf("Unmarshal: %v", err)
+		return errors.New("YAML Parse Error: "+err)
 	}
 
 	if v.Values.ServiceName == "" {
