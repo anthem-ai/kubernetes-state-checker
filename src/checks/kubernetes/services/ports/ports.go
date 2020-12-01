@@ -72,15 +72,15 @@ func (i inputs) DoesPortExist() Results {
 		Message: "Port not found: " + fmt.Sprint(values.Values.Port),
 	}
 
-	parseFailure := false
+	didValuesParse := false
 
 	err := doesPortExistParse(i.valuesYaml, &values)
 	if err != nil {
-		parseFailure = true
+		didValuesParse = true
 		checkResult.Message = fmt.Sprintf("%v", err)
 	}
 
-	if !parseFailure {
+	if !didValuesParse {
 		// Run kube stuff
 		services, err := kubeClientSet.CoreV1().Services(i.namespace).List(context.TODO(), metav1.ListOptions{})
 		if err != nil {
@@ -90,11 +90,9 @@ func (i inputs) DoesPortExist() Results {
 		for _, aService := range services.Items {
 
 			if aService.ObjectMeta.Name == values.Values.ServiceName {
-				fmt.Println("Found service: " + aService.ObjectMeta.Name)
 
 				for _, port := range aService.Spec.Ports {
 					if port.Port == values.Values.Port {
-						fmt.Println("Found port: " + fmt.Sprint(values.Values.Port))
 
 						checkResult.DidPass = true
 						checkResult.Message = "Port found: " + fmt.Sprint(values.Values.Port)

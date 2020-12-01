@@ -2,7 +2,6 @@ package checker
 
 import (
 	"checks/kubernetes/services/ports"
-	"fmt"
 
 	"k8s.io/client-go/kubernetes"
 )
@@ -32,7 +31,6 @@ func New(valuesYaml string, clientSet *kubernetes.Clientset, ttype string, name 
 
 // Run - runner
 func (c Check) Run() results {
-	fmt.Println("Starting runner ")
 
 	var returnResults results
 
