@@ -36,7 +36,23 @@ func Test_doesPortExistParse(t *testing.T) {
 				valuesYaml: "values:\n  serviceName: healthapp-caregaps",
 				v:          &doesPortExistStruct{},
 			},
-			wantErr: false,
+			wantErr: true,
+		},
+		{
+			name: "test4 - invalid port range high",
+			args: args{
+				valuesYaml: "values:\n  serviceName: healthapp-caregaps\n  port: 65354",
+				v:          &doesPortExistStruct{},
+			},
+			wantErr: true,
+		},
+		{
+			name: "test4 - invalid port range high",
+			args: args{
+				valuesYaml: "values:\n  serviceName: healthapp-caregaps\n  port: -1",
+				v:          &doesPortExistStruct{},
+			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
