@@ -25,9 +25,9 @@ kubernetes-state-checker:
       # Check if the port is the one that is specified above
       ports: true
       # Checks if there are endpoints associated to this service or not
-      endpoints: true
+      endpoints: false
       # Check if there is a cluster IP associated with this endpoint
-      clusterIP: true
+      clusterIP: false
       # Check if host port is enabled or not
       hostPort: false
 # - ttype: doesEnvarExistInDeployment
