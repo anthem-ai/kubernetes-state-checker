@@ -3,30 +3,33 @@ some: other configs
 random: 5
 
 kubernetes-state-checker:
-- ttype: doesServicePortExist
-  name: Does microservice 1 have a kubernetes service with port 5000 exposed
-  description: This checks if microservice 1 has a Kubernetes service with port 5000 exposed
+- ttype: serviceChecks
+  name: Checks for various aspects of a service
+  description: Allows you to check for various aspects of a service
   namespace: hos-m2
   # Input values for this specific check
   values:
+    # The service name to act on
     serviceName: healthapp-caregaps
+    # Port number to check if the `ports` check is enabled
     port: 20014
-- ttype: doesEnvarExistInDeployment
-  name: Check that the microservice 2 deployments has the correct envar for microservice 1
-  description: The microservice 2 uses the "MICROSERVICE_1_HOST_PORT" envar to find microservice 1.  This checks to make sure that this envar is there and set to the correct value.
-  Namespace: app
-  # Input values for this specific check
-  values:
-    deploymentName: microservice-2
-    envarKey: MICROSERVICE_1_HOST_PORT
-    envarValue: microservice-1:5000
-    foo: 
-      foo: bar
-- ttype: doesServicePortExist
-  name: Does microservice 1 have a kubernetes service with port 5000 exposed
-  description: This checks if microservice 1 has a Kubernetes service with port 5000 exposed
-  namespace: hos-m2
-  # Input values for this specific check
-  values:
-    serviceName: healthapp-caregaps
-    port: 20014
+    checksEnabled:
+      # Check if there is a cluster IP associated with this endpoint
+      clusterIP: true
+      # Checks if there are endpoints associated to this service or not
+      endpoints: true
+      # Check if host port is enabled or not
+      hostPort: false
+      # Check if the port is the one that is specified above
+      ports: true
+# - ttype: doesEnvarExistInDeployment
+#   name: Check that the microservice 2 deployments has the correct envar for microservice 1
+#   description: The microservice 2 uses the "MICROSERVICE_1_HOST_PORT" envar to find microservice 1.  This checks to make sure that this envar is there and set to the correct value.
+#   Namespace: app
+#   # Input values for this specific check
+#   values:
+#     deploymentName: microservice-2
+#     envarKey: MICROSERVICE_1_HOST_PORT
+#     envarValue: microservice-1:5000
+#     foo: 
+#       foo: bar
