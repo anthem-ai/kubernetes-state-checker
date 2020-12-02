@@ -41,11 +41,3 @@ kubernetes-state-checker:
 #     envarValue: microservice-1:5000
 #     foo: 
 #       foo: bar
-# - ttype: doesServicePortExist
-#   name: Does microservice 1 have a kubernetes service with port 5000 exposed
-#   description: This checks if microservice 1 has a Kubernetes service with port 5000 exposed
-#   namespace: hos-m2
-#   # Input values for this specific check
-#   values:
-#     serviceName: healthapp-caregaps
-#     port: 20014
