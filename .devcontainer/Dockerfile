@@ -87,13 +87,6 @@ ENV GO111MODULE=auto
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=dialog
 
-# Install Terraform
-WORKDIR /tmp
-RUN wget https://releases.hashicorp.com/terraform/0.12.28/terraform_0.12.28_linux_amd64.zip
-# RUN apt-get -y install zip
-RUN unzip terraform_0.12.28_linux_amd64.zip
-RUN cp /tmp/terraform /usr/local/bin/terraform
-
 # Install kubectl
 RUN sudo apt-get update && sudo apt-get install -y apt-transport-https gnupg2 curl
 RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -

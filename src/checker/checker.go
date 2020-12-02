@@ -1,6 +1,7 @@
 package checker
 
 import (
+	"checks/kubernetes/services"
 	"checks/kubernetes/services/ports"
 
 	"k8s.io/client-go/kubernetes"
@@ -38,6 +39,14 @@ func (c Check) Run() results {
 	case "doesServicePortExist":
 		check := ports.New(c.valuesYaml, kubeClientSet, c.Name, c.Namespace)
 		r := check.DoesPortExist()
+
+		returnResults = results{
+			DidPass: r.DidPass,
+			Message: r.Message,
+		}
+	case "serviceChecks":
+		check := services.New(c.valuesYaml, kubeClientSet, c.Name, c.Namespace)
+		r := check.GeneralCheck()
 
 		returnResults = results{
 			DidPass: r.DidPass,
