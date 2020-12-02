@@ -22,14 +22,14 @@ kubernetes-state-checker:
     # Port number to check if the `ports` check is enabled
     port: 20014
     checksEnabled:
-      # Check if the port is the one that is specified above
-      ports: true
-      # Checks if there are endpoints associated to this service or not
-      endpoints: false
       # Check if there is a cluster IP associated with this endpoint
-      clusterIP: false
+      clusterIP: true
+      # Checks if there are endpoints associated to this service or not
+      endpoints: true
       # Check if host port is enabled or not
       hostPort: false
+      # Check if the port is the one that is specified above
+      ports: true
 # - ttype: doesEnvarExistInDeployment
 #   name: Check that the microservice 2 deployments has the correct envar for microservice 1
 #   description: The microservice 2 uses the "MICROSERVICE_1_HOST_PORT" envar to find microservice 1.  This checks to make sure that this envar is there and set to the correct value.

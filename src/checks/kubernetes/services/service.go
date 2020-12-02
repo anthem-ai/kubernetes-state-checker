@@ -69,8 +69,8 @@ func (i inputs) GeneralCheck() Results {
 
 	// Set initial check results
 	checkResult := Results{
-		DidPass: false,
-		Message: "Port not found: " + fmt.Sprint(values.Values.Port),
+		DidPass: true,
+		Message: "",
 	}
 
 	didValuesParse := false
@@ -88,28 +88,67 @@ func (i inputs) GeneralCheck() Results {
 			panic(err.Error())
 		}
 
-		if values.Values.ChecksEnabled.ClusterIP {
-			fmt.Println("fooooooo")
-		}
+		// Loop through all of the services found
+		for _, aService := range services.Items {
 
-		if values.Values.ChecksEnabled.Endpoints {
-			fmt.Println("fooooooo")
-		}
+			// Find the service with the name we are interested in
+			if aService.ObjectMeta.Name == values.Values.ServiceName {
+				//
+				// Run only enabled checks
+				//
 
-		if values.Values.ChecksEnabled.HostPort {
-			fmt.Println("fooooooo")
-		}
+				if values.Values.ChecksEnabled.ClusterIP {
+					if aService.Spec.ClusterIP == "" {
+						checkResult.DidPass = false
+						checkResult.Message += "* No ClusterIP Found\n"
+					} else {
+						checkResult.Message += "* ClusterIP Found\n"
+					}
+				}
 
-		if values.Values.ChecksEnabled.Ports {
-			for _, aService := range services.Items {
+				if values.Values.ChecksEnabled.Endpoints {
+					// Look to see if the endpoints for this service exists or not
+					endpoints, err := kubeClientSet.CoreV1().Endpoints(i.namespace).List(context.TODO(), metav1.ListOptions{})
+					if err != nil {
+						panic(err.Error())
+					}
 
-				if aService.ObjectMeta.Name == values.Values.ServiceName {
+					for _, anEndpoint := range endpoints.Items {
+						if anEndpoint.ObjectMeta.Name == values.Values.ServiceName {
+							if len(anEndpoint.Subsets) == 1 {
+								if len(anEndpoint.Subsets[0].Addresses) > 0 {
+									for _, anAddress := range anEndpoint.Subsets[0].Addresses {
+										if anAddress.IP != "" {
+											checkResult.Message += "* Endpoint found: " + anAddress.IP + "\n"
+										} else {
+											checkResult.DidPass = false
+											checkResult.Message += "* No Endpoint found in the Subsets[0].Addresses[x].IP field\n"
+										}
+									}
+								} else {
+									checkResult.DidPass = false
+									checkResult.Message += "* No Endpoint found in the Subsets[0].Addresses list\n"
+								}
+							} else {
+								checkResult.DidPass = false
+								checkResult.Message += "* No Endpoint found in the subsets list\n"
+							}
+						}
+					}
+				}
 
+				if values.Values.ChecksEnabled.HostPort {
+					// TBD
+				}
+
+				if values.Values.ChecksEnabled.Ports {
 					for _, port := range aService.Spec.Ports {
-						if port.Port == values.Values.Port {
+						if port.Port != values.Values.Port {
 
-							checkResult.DidPass = true
-							checkResult.Message = "Port found: " + fmt.Sprint(values.Values.Port)
+							checkResult.DidPass = false
+							checkResult.Message += "* Port NOT found: " + fmt.Sprint(values.Values.Port) + "\n"
+						} else {
+							checkResult.Message += "* Port found: " + fmt.Sprint(values.Values.Port) + "\n"
 						}
 					}
 				}
