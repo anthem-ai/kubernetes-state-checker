@@ -137,6 +137,87 @@ func Test_inputs_GeneralCheck(t *testing.T) {
 				Message: "* ClusterIP Found\n",
 			},
 		},
+		// TODO: Fix this test: The endpoint k8s fake info doesnt show up.  The endpoint data is in the second k8s call.  Not sure why
+		// {
+		// 	name: "Checking Endpoints",
+		// 	fields: fields{
+		// 		checkName:  "check2",
+		// 		namespace:  "ns1",
+		// 		valuesYaml: "values:\n  serviceName: service1\n  port: 20014\n  checksEnabled:\n    endpoints: true",
+		// 	},
+		// 	args: args{
+		// 		// Doc/example: https://gianarb.it/blog/unit-testing-kubernetes-client-in-go
+		// 		kubeClientSet: fake.NewSimpleClientset(&v1.EndpointsList{
+		// 			Items: []v1.Endpoints{
+		// 				{
+		// 					ObjectMeta: metav1.ObjectMeta{
+		// 						Name: "service1",
+		// 					},
+		// 					Subsets: []v1.EndpointSubset{
+		// 						{
+		// 							Addresses: []v1.EndpointAddress{
+		// 								{
+		// 									IP: "1.1.1.1",
+		// 								},
+		// 							},
+		// 						},
+		// 					},
+		// 				},
+		// 			},
+		// 		}, &v1.ServiceList{
+		// 			Items: []v1.Service{
+		// 				{
+		// 					ObjectMeta: metav1.ObjectMeta{
+		// 						Name:        "service1",
+		// 						Namespace:   "ns1",
+		// 						Annotations: map[string]string{},
+		// 					},
+		// 					Spec: v1.ServiceSpec{
+		// 						ClusterIP: "1.1.1.1",
+		// 					},
+		// 				},
+		// 			},
+		// 		}),
+		// 	},
+		// 	want: Results{
+		// 		DidPass: true,
+		// 		Message: "* ClusterIP Found\n",
+		// 	},
+		// },
+		{
+			name: "Checking ports",
+			fields: fields{
+				checkName:  "check3",
+				namespace:  "ns1",
+				valuesYaml: "values:\n  serviceName: service1\n  port: 20014\n  checksEnabled:\n    ports: true",
+			},
+			args: args{
+				// Doc/example: https://gianarb.it/blog/unit-testing-kubernetes-client-in-go
+				kubeClientSet: fake.NewSimpleClientset(&v1.ServiceList{
+					Items: []v1.Service{
+						{
+							ObjectMeta: metav1.ObjectMeta{
+								Name:        "service1",
+								Namespace:   "ns1",
+								Annotations: map[string]string{},
+							},
+							Spec: v1.ServiceSpec{
+								ClusterIP: "1.1.1.1",
+								Ports: []v1.ServicePort{
+									{
+										Port: 20014,
+									},
+								},
+							},
+						},
+					},
+				}),
+			},
+			want: Results{
+				DidPass: true,
+				Message: "* Port found: 20014\n",
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -146,7 +227,7 @@ func Test_inputs_GeneralCheck(t *testing.T) {
 				namespace:  tt.fields.namespace,
 			}
 			if got := i.GeneralCheck(tt.args.kubeClientSet); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("inputs.GeneralCheck() = %v, want %v", got, tt.want)
+				t.Errorf("%v: inputs.GeneralCheck() = %v, want %v", tt.name, got, tt.want)
 			}
 		})
 	}

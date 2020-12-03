@@ -141,10 +141,9 @@ func (i inputs) GeneralCheck(kubeClientSet kubernetes.Interface) Results {
 				if values.Values.ChecksEnabled.Ports {
 					for _, port := range aService.Spec.Ports {
 						if port.Port != values.Values.Port {
-
-							checkResult.DidPass = false
 							checkResult.Message += "* Port NOT found: " + fmt.Sprint(values.Values.Port) + "\n"
 						} else {
+							checkResult.DidPass = true
 							checkResult.Message += "* Port found: " + fmt.Sprint(values.Values.Port) + "\n"
 						}
 					}
