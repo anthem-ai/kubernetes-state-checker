@@ -109,7 +109,7 @@ func Test_inputs_GeneralCheck(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{
-			name: "test1",
+			name: "Checking clusterIP",
 			fields: fields{
 				checkName:  "check1",
 				namespace:  "ns1",
