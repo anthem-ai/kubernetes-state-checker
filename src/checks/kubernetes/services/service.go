@@ -10,7 +10,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-var kubeClientSet *kubernetes.Clientset
+// var kubeClientSet *kubernetes.Clientset
 
 type inputs struct {
 	valuesYaml string
@@ -24,9 +24,8 @@ type Results struct {
 }
 
 // New New
-func New(valuesYaml string, clientSet *kubernetes.Clientset, checkName string, namespace string) inputs {
+func New(valuesYaml string, checkName string, namespace string) inputs {
 	s := inputs{valuesYaml, checkName, namespace}
-	kubeClientSet = clientSet
 
 	return s
 }
@@ -63,13 +62,13 @@ func serviceParse(valuesYaml string, v *serviceStruct) error {
 }
 
 // GeneralCheck GeneralCheck
-func (i inputs) GeneralCheck() Results {
+func (i inputs) GeneralCheck(kubeClientSet kubernetes.Interface) Results {
 
 	var values serviceStruct
 
 	// Set initial check results
 	checkResult := Results{
-		DidPass: true,
+		DidPass: false,
 		Message: "",
 	}
 
@@ -99,9 +98,9 @@ func (i inputs) GeneralCheck() Results {
 
 				if values.Values.ChecksEnabled.ClusterIP {
 					if aService.Spec.ClusterIP == "" {
-						checkResult.DidPass = false
 						checkResult.Message += "* No ClusterIP Found\n"
 					} else {
+						checkResult.DidPass = true
 						checkResult.Message += "* ClusterIP Found\n"
 					}
 				}
@@ -119,18 +118,16 @@ func (i inputs) GeneralCheck() Results {
 								if len(anEndpoint.Subsets[0].Addresses) > 0 {
 									for _, anAddress := range anEndpoint.Subsets[0].Addresses {
 										if anAddress.IP != "" {
+											checkResult.DidPass = true
 											checkResult.Message += "* Endpoint found: " + anAddress.IP + "\n"
 										} else {
-											checkResult.DidPass = false
 											checkResult.Message += "* No Endpoint found in the Subsets[0].Addresses[x].IP field\n"
 										}
 									}
 								} else {
-									checkResult.DidPass = false
 									checkResult.Message += "* No Endpoint found in the Subsets[0].Addresses list\n"
 								}
 							} else {
-								checkResult.DidPass = false
 								checkResult.Message += "* No Endpoint found in the subsets list\n"
 							}
 						}

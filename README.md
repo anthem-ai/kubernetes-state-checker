@@ -114,6 +114,8 @@ go get k8s.io/apimachinery/pkg/apis/meta/v1
 go get k8s.io/client-go/kubernetes
 go get k8s.io/client-go/tools/clientcmd
 go get k8s.io/client-go/util/homedir
+go get github.com/evanphx/json-patch
+go get k8s.io/kube-openapi/pkg/util/proto
 ```
 
 ## Kubeconfig
