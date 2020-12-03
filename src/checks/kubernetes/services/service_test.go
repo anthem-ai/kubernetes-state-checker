@@ -109,7 +109,7 @@ func Test_inputs_GeneralCheck(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{
-			name: "Checking clusterIP",
+			name: "Checking clusterIP (positive)",
 			fields: fields{
 				checkName:  "check1",
 				namespace:  "ns1",
@@ -139,7 +139,7 @@ func Test_inputs_GeneralCheck(t *testing.T) {
 		},
 		// TODO: Fix this test: The endpoint k8s fake info doesnt show up.  The endpoint data is in the second k8s call.  Not sure why
 		// {
-		// 	name: "Checking Endpoints",
+		// 	name: "Checking Endpoints (positive)",
 		// 	fields: fields{
 		// 		checkName:  "check2",
 		// 		namespace:  "ns1",
@@ -185,7 +185,7 @@ func Test_inputs_GeneralCheck(t *testing.T) {
 		// 	},
 		// },
 		{
-			name: "Checking ports",
+			name: "Checking ports (positive)",
 			fields: fields{
 				checkName:  "check3",
 				namespace:  "ns1",
