@@ -116,6 +116,7 @@ func Test_inputs_GeneralCheck(t *testing.T) {
 				valuesYaml: "values:\n  serviceName: service1\n  port: 20014\n  checksEnabled:\n    clusterIP: true",
 			},
 			args: args{
+				// Doc/example: https://gianarb.it/blog/unit-testing-kubernetes-client-in-go
 				kubeClientSet: fake.NewSimpleClientset(&v1.ServiceList{
 					Items: []v1.Service{
 						{
