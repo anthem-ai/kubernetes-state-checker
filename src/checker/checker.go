@@ -37,8 +37,8 @@ func (c Check) Run() results {
 	switch c.Ttype {
 
 	case "serviceChecks":
-		check := services.New(c.valuesYaml, kubeClientSet, c.Name, c.Namespace)
-		r := check.GeneralCheck()
+		check := services.New(c.valuesYaml, c.Name, c.Namespace)
+		r := check.GeneralCheck(kubeClientSet)
 
 		returnResults = results{
 			DidPass: r.DidPass,
