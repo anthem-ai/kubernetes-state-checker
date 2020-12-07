@@ -31,5 +31,22 @@ kubernetes-state-checker:
 #     deploymentName: microservice-2
 #     envarKey: MICROSERVICE_1_HOST_PORT
 #     envarValue: microservice-1:5000
-#     foo: 
+#     foo:
 #       foo: bar
+- ttype: deploymentChecks
+  name: Checks for various aspects of a deployment
+  description: Allows you to check for various aspects of a deployment
+  namespace: hos-m2
+  # Input values for this specific check
+  values:
+    # The service name to act on
+    deploymentName: healthapp-caregaps
+    checksEnabled:
+      # Check if a set of environment variables are present
+      environmentVars:
+      - foo: bar
+      - foo2: bar2
+      # Check if a configmap mount is set
+      configMapMounts:
+      - foo
+      - bar
