@@ -1,6 +1,7 @@
 package checker
 
 import (
+	"checks/kubernetes/deployments"
 	"checks/kubernetes/services"
 
 	"k8s.io/client-go/kubernetes"
@@ -38,6 +39,14 @@ func (c Check) Run() results {
 
 	case "serviceChecks":
 		check := services.New(c.valuesYaml, c.Name, c.Namespace)
+		r := check.GeneralCheck(kubeClientSet)
+
+		returnResults = results{
+			DidPass: r.DidPass,
+			Message: r.Message,
+		}
+	case "deploymentChecks":
+		check := deployments.New(c.valuesYaml, c.Name, c.Namespace)
 		r := check.GeneralCheck(kubeClientSet)
 
 		returnResults = results{

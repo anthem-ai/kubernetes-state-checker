@@ -32,13 +32,16 @@ type deploymentStruct struct {
 	Values struct {
 		DeploymentName string `yaml:"deploymentName"`
 		ChecksEnabled  struct {
-			EnvironmentVars environmentVars `yaml:"environmentVars"`
+			Containers []struct {
+				Name string `yaml:"name,omitempty"`
+				Env  []struct {
+					Name  string `yaml:"name,omitempty"`
+					Value string `yaml:"value,omitempty"`
+				} `yaml:"env,omitempty"`
+			} `yaml:"containers,omitempty"`
 		} `yaml:"checksEnabled"`
 	} `yaml:"values"`
 }
-
-// type environmentVars map[string]string
-type environmentVars []map[string]interface{}
 
 func deploymentParse(valuesYaml string, v *deploymentStruct) error {
 
@@ -81,10 +84,80 @@ func (i inputs) GeneralCheck(kubeClientSet kubernetes.Interface) Results {
 			panic(err.Error())
 		}
 
+		// fmt.Println("xx")
+		// fmt.Println(values.Values.ChecksEnabled)
+		// for _, container := range values.Values.ChecksEnabled.Containers {
+
+		// 	fmt.Println("xxx")
+
+		// 	// for _, val := range container.Env {
+
+		// 	// 	for k2, val2 := range val {
+		// 	// 		fmt.Println(k2)
+		// 	// 		fmt.Println(val2)
+		// 	// 	}
+		// 	// }
+
+		// 	fmt.Println("xxx")
+
+		// 	for _, val := range container.Env {
+
+		// 		fmt.Println(val.Name)
+		// 		fmt.Println(val.Value)
+
+		// 	}
+		// }
+
 		// Loop through all of the services found
 		for _, aDeployment := range deployment.Items {
+
+			// Find the deployment we want to look at
 			if aDeployment.ObjectMeta.Name == values.Values.DeploymentName {
-				fmt.Println("woot")
+
+				// Number of containers to check
+				numberOfContainers := len(values.Values.ChecksEnabled.Containers)
+				numberOfContainersEnvarsFound := 0
+
+				// Loop through the containers in the input values
+				for _, inputContainer := range values.Values.ChecksEnabled.Containers {
+
+					// Find the container in the Deployment
+					for _, container := range aDeployment.Spec.Template.Spec.Containers {
+						if inputContainer.Name == container.Name {
+
+							// The number of envars that should exist
+							numberOfEnvars := len(container.Env)
+							numberOfEnvarsFound := 0
+
+							// Find the envars in the k8s pod's containers
+							for _, inputContainerEnv := range inputContainer.Env {
+								for _, k8sDeploymentEnv := range container.Env {
+									if inputContainerEnv.Name == k8sDeploymentEnv.Name &&
+										inputContainerEnv.Value == k8sDeploymentEnv.Value {
+										// Found the envar
+										fmt.Println("Found envar")
+										numberOfEnvarsFound++
+									}
+								}
+							}
+
+							if numberOfEnvars == numberOfEnvarsFound {
+								// Found the correct amount of envars
+								fmt.Println("Found the correct number of envars")
+								numberOfContainersEnvarsFound++
+								checkResult.Message += "* Found all envars in Deployment: " + values.Values.DeploymentName + " | container: " + container.Name + "\n"
+							}
+
+						}
+					}
+				}
+
+				if numberOfContainers == numberOfContainersEnvarsFound {
+					// Found the envars in all of the input check's envar(s)
+					fmt.Println("Found envars in all containers")
+					checkResult.DidPass = true
+				}
+
 			}
 		}
 
