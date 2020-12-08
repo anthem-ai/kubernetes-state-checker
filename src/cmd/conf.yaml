@@ -48,3 +48,19 @@ kubernetes-state-checker:
       configMapMounts:
       - foo
       - bar
+- ttype: deploymentChecks
+  name: Checks that the deployment has 2 contianers
+  description: Allows you to check for various aspects of a deployment
+  namespace: hos-m2
+  # Input values for this specific check
+  values:
+    # The service name to act on
+    deploymentName: healthapp-caregaps
+    checksEnabled:
+      containers:
+      - name: healthapp-caregaps-app
+        containerMustBePresent: true
+      - name: envoy
+        containerMustBePresent: true
+      - name: opa
+        containerMustBePresent: true

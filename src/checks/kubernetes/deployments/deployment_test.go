@@ -144,6 +144,72 @@ values:
 `,
 			},
 		},
+		{
+			name: "Checking the number of pods in a deployment (positive)",
+			fields: fields{
+				checkName: "check1",
+				namespace: "ns1",
+				// The spacing is real finicky.  yaml can't have tabs.  All spacing must be spaces
+				valuesYaml: `---
+values:
+  # The service name to act on
+  deploymentName: check-number-of-pods
+  checksEnabled:
+    containers:
+    - name: pod-container1
+      containerMustBePresent: true
+    - name: pod-container2
+      containerMustBePresent: true`,
+			},
+			args: args{
+				// Doc/example: https://gianarb.it/blog/unit-testing-kubernetes-client-in-go
+				kubeClientSet: fake.NewSimpleClientset(&appsv1.DeploymentList{
+					Items: []appsv1.Deployment{
+						{
+							ObjectMeta: metav1.ObjectMeta{
+								Name:        "check-number-of-pods",
+								Namespace:   "ns1",
+								Annotations: map[string]string{},
+							},
+							Spec: appsv1.DeploymentSpec{
+								Template: corev1.PodTemplateSpec{
+									Spec: corev1.PodSpec{
+										Containers: []corev1.Container{
+											{
+												Name: "pod-container1",
+												Env: []corev1.EnvVar{
+													{
+														Name:  "pod",
+														Value: "bar",
+													},
+													{
+														Name:  "pod",
+														Value: "bar2",
+													},
+												},
+											},
+											{
+												Name: "pod-container2",
+												Env: []corev1.EnvVar{
+													{
+														Name:  "pod",
+														Value: "bar",
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				}),
+			},
+			want: Results{
+				DidPass: true,
+				Message: `* Found the correct number of containers in this deployment`,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

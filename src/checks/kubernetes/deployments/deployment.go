@@ -33,8 +33,9 @@ type deploymentStruct struct {
 		DeploymentName string `yaml:"deploymentName"`
 		ChecksEnabled  struct {
 			Containers []struct {
-				Name string `yaml:"name,omitempty"`
-				Env  []struct {
+				Name                   string `yaml:"name"`
+				ContainerMustBePresent bool   `yaml:"containerMustBePresent"`
+				Env                    []struct {
 					Name  string `yaml:"name,omitempty"`
 					Value string `yaml:"value,omitempty"`
 				} `yaml:"env,omitempty"`
@@ -90,6 +91,9 @@ func (i inputs) GeneralCheck(kubeClientSet kubernetes.Interface) Results {
 			// Find the deployment we want to look at
 			if aDeployment.ObjectMeta.Name == values.Values.DeploymentName {
 
+				//
+				// Check for envars
+				//
 				// Number of containers to check
 				numberOfContainers := len(values.Values.ChecksEnabled.Containers)
 				numberOfContainersEnvarsFound := 0
@@ -129,6 +133,30 @@ func (i inputs) GeneralCheck(kubeClientSet kubernetes.Interface) Results {
 				if numberOfContainers == numberOfContainersEnvarsFound {
 					// Found the envars in all of the input check's envar(s)
 					checkResult.DidPass = true
+				} else {
+					checkResult.DidPass = false
+				}
+
+				//
+				// Check for the the containers that has the `containerMustBePresent` flag set to true
+				//
+				// The number of containers that the user input says should be present
+				userInputNumberOfContainersPresent := 0
+
+				// Count the number of containers the user input says should be present
+				for _, inputContainer := range values.Values.ChecksEnabled.Containers {
+					if inputContainer.ContainerMustBePresent {
+						userInputNumberOfContainersPresent++
+					}
+				}
+
+				if userInputNumberOfContainersPresent > 0 {
+					if userInputNumberOfContainersPresent == len(aDeployment.Spec.Template.Spec.Containers) {
+						checkResult.DidPass = true
+						checkResult.Message += "* Found the correct number of containers in this deployment"
+					} else {
+						checkResult.DidPass = false
+					}
 				}
 
 			}
