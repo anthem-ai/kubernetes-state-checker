@@ -22,17 +22,6 @@ kubernetes-state-checker:
       hostPort: false
       # Check if the port is the one that is specified above
       ports: true
-# - ttype: doesEnvarExistInDeployment
-#   name: Check that the microservice 2 deployments has the correct envar for microservice 1
-#   description: The microservice 2 uses the "MICROSERVICE_1_HOST_PORT" envar to find microservice 1.  This checks to make sure that this envar is there and set to the correct value.
-#   Namespace: app
-#   # Input values for this specific check
-#   values:
-#     deploymentName: microservice-2
-#     envarKey: MICROSERVICE_1_HOST_PORT
-#     envarValue: microservice-1:5000
-#     foo:
-#       foo: bar
 - ttype: deploymentChecks
   name: Checks for various aspects of a deployment
   description: Allows you to check for various aspects of a deployment
@@ -42,10 +31,19 @@ kubernetes-state-checker:
     # The service name to act on
     deploymentName: healthapp-caregaps
     checksEnabled:
-      # Check if a set of environment variables are present
-      environmentVars:
-      - foo: bar
-      - foo2: bar2
+      containers:
+      - name: container1
+        # Check if a set of environment variables are present
+        env:
+        - name: foo
+          value: bar
+        - name: foo2
+          value: bar2
+        # image:
+        #   name: "something*:*"
+        # healthcheck:
+        #   value: something
+
       # Check if a configmap mount is set
       configMapMounts:
       - foo
