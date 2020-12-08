@@ -84,30 +84,6 @@ func (i inputs) GeneralCheck(kubeClientSet kubernetes.Interface) Results {
 			panic(err.Error())
 		}
 
-		// fmt.Println("xx")
-		// fmt.Println(values.Values.ChecksEnabled)
-		// for _, container := range values.Values.ChecksEnabled.Containers {
-
-		// 	fmt.Println("xxx")
-
-		// 	// for _, val := range container.Env {
-
-		// 	// 	for k2, val2 := range val {
-		// 	// 		fmt.Println(k2)
-		// 	// 		fmt.Println(val2)
-		// 	// 	}
-		// 	// }
-
-		// 	fmt.Println("xxx")
-
-		// 	for _, val := range container.Env {
-
-		// 		fmt.Println(val.Name)
-		// 		fmt.Println(val.Value)
-
-		// 	}
-		// }
-
 		// Loop through all of the services found
 		for _, aDeployment := range deployment.Items {
 
@@ -135,7 +111,6 @@ func (i inputs) GeneralCheck(kubeClientSet kubernetes.Interface) Results {
 									if inputContainerEnv.Name == k8sDeploymentEnv.Name &&
 										inputContainerEnv.Value == k8sDeploymentEnv.Value {
 										// Found the envar
-										fmt.Println("Found envar")
 										numberOfEnvarsFound++
 									}
 								}
@@ -143,7 +118,6 @@ func (i inputs) GeneralCheck(kubeClientSet kubernetes.Interface) Results {
 
 							if numberOfEnvars == numberOfEnvarsFound {
 								// Found the correct amount of envars
-								fmt.Println("Found the correct number of envars")
 								numberOfContainersEnvarsFound++
 								checkResult.Message += "* Found all envars in Deployment: " + values.Values.DeploymentName + " | container: " + container.Name + "\n"
 							}
@@ -154,7 +128,6 @@ func (i inputs) GeneralCheck(kubeClientSet kubernetes.Interface) Results {
 
 				if numberOfContainers == numberOfContainersEnvarsFound {
 					// Found the envars in all of the input check's envar(s)
-					fmt.Println("Found envars in all containers")
 					checkResult.DidPass = true
 				}
 

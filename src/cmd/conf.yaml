@@ -42,6 +42,7 @@ kubernetes-state-checker:
     # The service name to act on
     deploymentName: healthapp-caregaps
     checksEnabled:
+<<<<<<< HEAD
       containers:
       - name: container1
         # Check if a set of environment variables are present
@@ -57,6 +58,12 @@ kubernetes-state-checker:
         # healthcheck:
         #   value: something
 
+=======
+      # Check if a set of environment variables are present
+      environmentVars:
+      - foo: bar
+      - foo2: bar2
+>>>>>>> ca0d914203a7fb48a3458dc42a52eaf9ef755e74
       # Check if a configmap mount is set
       configMapMounts:
       - foo
