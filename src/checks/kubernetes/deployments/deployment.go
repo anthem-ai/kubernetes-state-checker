@@ -33,9 +33,8 @@ type deploymentStruct struct {
 		DeploymentName string `yaml:"deploymentName"`
 		ChecksEnabled  struct {
 			Containers []struct {
-				Name                   string `yaml:"name"`
-				ContainerMustBePresent bool   `yaml:"containerMustBePresent"`
-				Env                    []struct {
+				Name string `yaml:"name"`
+				Env  []struct {
 					Name  string `yaml:"name,omitempty"`
 					Value string `yaml:"value,omitempty"`
 				} `yaml:"env,omitempty"`
@@ -141,25 +140,34 @@ func (i inputs) GeneralCheck(kubeClientSet kubernetes.Interface) Results {
 				//
 				// Check for the the containers that has the `containerMustBePresent` flag set to true
 				//
-				// The number of containers that the user input says should be present
-				userInputNumberOfContainersPresent := 0
+				if len(values.Values.ChecksEnabled.Containers) > 0 {
 
-				// Count the number of containers the user input says should be present
-				for _, inputContainer := range values.Values.ChecksEnabled.Containers {
-					if inputContainer.ContainerMustBePresent {
-						userInputNumberOfContainersPresent++
+					didFindAllContainers := true
+
+					// Find each container in the deployment based on the user input
+					for _, inputContainer := range values.Values.ChecksEnabled.Containers {
+
+						didFindContainer := false
+
+						// Search for the user inputted container in the deployment
+						for _, container := range aDeployment.Spec.Template.Spec.Containers {
+							if inputContainer.Name == container.Name {
+								didFindContainer = true
+							}
+						}
+
+						if !didFindContainer {
+							didFindAllContainers = false
+						}
 					}
-				}
 
-				if userInputNumberOfContainersPresent > 0 {
-					if userInputNumberOfContainersPresent == len(aDeployment.Spec.Template.Spec.Containers) {
+					if didFindAllContainers {
 						checkResult.DidPass = true
-						checkResult.Message += "* Found the correct number of containers in this deployment"
+						checkResult.Message += "* Found the correct number of containers in this deployment\n"
 					} else {
 						checkResult.DidPass = false
 					}
 				}
-
 			}
 		}
 

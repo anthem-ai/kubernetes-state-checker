@@ -145,6 +145,7 @@ values:
 				DidPass: true,
 				Message: `* Found all envars in Deployment: deployment1 | container: container1
 * Found all envars in Deployment: deployment1 | container: container2
+* Found the correct number of containers in this deployment
 `,
 			},
 		},
@@ -161,9 +162,7 @@ values:
   checksEnabled:
     containers:
     - name: pod-container1
-      containerMustBePresent: true
-    - name: pod-container2
-      containerMustBePresent: true`,
+    - name: pod-container2`,
 			},
 			args: args{
 				// Doc/example: https://gianarb.it/blog/unit-testing-kubernetes-client-in-go
@@ -211,7 +210,8 @@ values:
 			},
 			want: Results{
 				DidPass: true,
-				Message: `* Found the correct number of containers in this deployment`,
+				Message: `* Found the correct number of containers in this deployment
+`,
 			},
 		},
 	}
