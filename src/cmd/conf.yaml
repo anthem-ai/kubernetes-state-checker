@@ -47,7 +47,7 @@ kubernetes-state-checker:
       - foo
       - bar
 - ttype: deploymentChecks
-  name: Checks that the deployment has 2 contianers
+  name: Checks that the deployment has 3 contianers
   description: Allows you to check for various aspects of a deployment
   namespace: hos-m2
   # Input values for this specific check
@@ -57,8 +57,5 @@ kubernetes-state-checker:
     checksEnabled:
       containers:
       - name: healthapp-caregaps-app
-        containerMustBePresent: true
       - name: envoy
-        containerMustBePresent: true
       - name: opa
-        containerMustBePresent: true
