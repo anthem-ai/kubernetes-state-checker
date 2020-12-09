@@ -120,12 +120,13 @@ func (i inputs) GeneralCheck(kubeClientSet kubernetes.Interface) Results {
 								}
 							}
 
-							if numberOfEnvars == numberOfEnvarsFound {
-								// Found the correct amount of envars
-								numberOfContainersEnvarsFound++
-								checkResult.Message += "* Found all envars in Deployment: " + values.Values.DeploymentName + " | container: " + container.Name + "\n"
+							if numberOfEnvars > 0 {
+								if numberOfEnvars == numberOfEnvarsFound {
+									// Found the correct amount of envars
+									numberOfContainersEnvarsFound++
+									checkResult.Message += "* Found all envars in Deployment: " + values.Values.DeploymentName + " | container: " + container.Name + "\n"
+								}
 							}
-
 						}
 					}
 				}
