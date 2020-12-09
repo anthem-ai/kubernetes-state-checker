@@ -118,6 +118,10 @@ values:
 														Name:  "foo2",
 														Value: "bar2",
 													},
+													{
+														Name:  "foo3",
+														Value: "bar3",
+													},
 												},
 											},
 											{

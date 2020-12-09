@@ -106,7 +106,7 @@ func (i inputs) GeneralCheck(kubeClientSet kubernetes.Interface) Results {
 						if inputContainer.Name == container.Name {
 
 							// The number of envars that should exist
-							numberOfEnvars := len(container.Env)
+							numberOfEnvars := len(inputContainer.Env)
 							numberOfEnvarsFound := 0
 
 							// Find the envars in the k8s pod's containers
