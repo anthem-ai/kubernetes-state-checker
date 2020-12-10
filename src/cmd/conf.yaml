@@ -32,13 +32,11 @@ kubernetes-state-checker:
     deploymentName: healthapp-caregaps
     checksEnabled:
       containers:
-      - name: container1
+      - name: healthapp-caregaps-app
         # Check if a set of environment variables are present
         env:
-        - name: foo
-          value: bar
-        - name: foo2
-          value: bar2
+        - name: AUTH_ADDRESS
+          value: localhost:30004
         # image:
         #   name: "something*:*"
         # healthcheck:
@@ -48,3 +46,16 @@ kubernetes-state-checker:
       configMapMounts:
       - foo
       - bar
+- ttype: deploymentChecks
+  name: Checks that the deployment has 3 contianers
+  description: Allows you to check for various aspects of a deployment
+  namespace: hos-m2
+  # Input values for this specific check
+  values:
+    # The service name to act on
+    deploymentName: healthapp-caregaps
+    checksEnabled:
+      containers:
+      - name: healthapp-caregaps-app
+      - name: envoy
+      - name: opa
