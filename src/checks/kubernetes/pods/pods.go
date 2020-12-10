@@ -47,10 +47,6 @@ func podParse(valuesYaml string, v *podStruct) error {
 		return errors.New(fmt.Sprintf("YAML Parse Error: %v", err))
 	}
 
-	// if v.Values.PodName == "" {
-	// 	return errors.New("Check values: no `PodName` set")
-	// }
-
 	return nil
 }
 
