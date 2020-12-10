@@ -203,7 +203,105 @@ values:
 			},
 			want: Results{
 				DidPass: false,
-				Message: "* Did not find pod: pod-1-\n",
+				Message: `* Pod pod-1-123abc-abc is in Running state
+* Did not find pod: pod-2-
+`,
+			},
+		},
+		{
+			name: "Checking pod state - pod-2 in an incorrect state (negative)",
+			fields: fields{
+				checkName: "check1",
+				namespace: "ns1",
+				valuesYaml: `---
+values:
+  checksEnabled:
+    state:
+    - podName: pod-1-
+      desiredState: Running
+    - podName: pod-2-
+      desiredState: Running`,
+			},
+			args: args{
+				// Doc/example: https://gianarb.it/blog/unit-testing-kubernetes-client-in-go
+				kubeClientSet: fake.NewSimpleClientset(&v1.PodList{
+					Items: []v1.Pod{
+						{
+							ObjectMeta: metav1.ObjectMeta{
+								Name:        "pod-1-123abc-abc",
+								Namespace:   "ns1",
+								Annotations: map[string]string{},
+							},
+							Status: v1.PodStatus{
+								Phase: "Running",
+							},
+						},
+						{
+							ObjectMeta: metav1.ObjectMeta{
+								Name:        "pod-2-123abc-abc",
+								Namespace:   "ns1",
+								Annotations: map[string]string{},
+							},
+							Status: v1.PodStatus{
+								Phase: "ContainerCreating",
+							},
+						},
+					},
+				}),
+			},
+			want: Results{
+				DidPass: false,
+				Message: `* Pod pod-1-123abc-abc is in Running state
+* Pod pod-2-123abc-abc is NOT in Running state
+`,
+			},
+		},
+		{
+			name: "Checking pod state - pod-2 in an incorrect state - reverse pod order (negative)",
+			fields: fields{
+				checkName: "check1",
+				namespace: "ns1",
+				valuesYaml: `---
+values:
+  checksEnabled:
+    state:
+    - podName: pod-2-
+      desiredState: Running
+    - podName: pod-1-
+      desiredState: Running`,
+			},
+			args: args{
+				// Doc/example: https://gianarb.it/blog/unit-testing-kubernetes-client-in-go
+				kubeClientSet: fake.NewSimpleClientset(&v1.PodList{
+					Items: []v1.Pod{
+						{
+							ObjectMeta: metav1.ObjectMeta{
+								Name:        "pod-1-123abc-abc",
+								Namespace:   "ns1",
+								Annotations: map[string]string{},
+							},
+							Status: v1.PodStatus{
+								Phase: "Running",
+							},
+						},
+						{
+							ObjectMeta: metav1.ObjectMeta{
+								Name:        "pod-2-123abc-abc",
+								Namespace:   "ns1",
+								Annotations: map[string]string{},
+							},
+							Status: v1.PodStatus{
+								Phase: "ContainerCreating",
+							},
+						},
+					},
+				}),
+			},
+			want: Results{
+				DidPass: false,
+				Message: `* Pod pod-2-123abc-abc is NOT in Running state
+* Pod pod-1-123abc-abc is in Running state
+`,
 			},
 		},
 	}

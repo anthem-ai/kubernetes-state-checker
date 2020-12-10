@@ -84,6 +84,7 @@ func (i inputs) GeneralCheck(kubeClientSet kubernetes.Interface) Results {
 		//
 		// Check pod state
 		//
+		didFindError := false
 		for _, inputPod := range values.Values.ChecksEnabled.State {
 
 			didFindContainer := false
@@ -99,14 +100,23 @@ func (i inputs) GeneralCheck(kubeClientSet kubernetes.Interface) Results {
 
 					if inputPod.DesiredState == string(aPod.Status.Phase) {
 						checkResult.DidPass = true
-						checkResult.Message = "* Pod " + aPod.ObjectMeta.Name + " is in " + inputPod.DesiredState + " state\n"
+						checkResult.Message += "* Pod " + aPod.ObjectMeta.Name + " is in " + inputPod.DesiredState + " state\n"
+					} else {
+						checkResult.Message += "* Pod " + aPod.ObjectMeta.Name + " is NOT in " + inputPod.DesiredState + " state\n"
+						didFindError = true
 					}
 				}
 			}
 
 			if !didFindContainer {
-				checkResult.Message = "* Did not find pod: " + inputPod.PodName + "\n"
+				checkResult.Message += "* Did not find pod: " + inputPod.PodName + "\n"
+				didFindError = true
 			}
+		}
+
+		// Found one or more errors
+		if didFindError {
+			checkResult.DidPass = false
 		}
 
 	}
