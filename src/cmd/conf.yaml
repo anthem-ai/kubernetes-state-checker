@@ -3,62 +3,62 @@ some: other configs
 random: 5
 
 kubernetes-state-checker:
-# - ttype: serviceChecks
-#   name: Checks for various aspects of a service
-#   description: Allows you to check for various aspects of a service
-#   namespace: hos-m2
-#   # Input values for this specific check
-#   values:
-#     # The service name to act on
-#     serviceName: healthapp-caregaps
-#     # Port number to check if the `ports` check is enabled
-#     port: 20014
-#     checksEnabled:
-#       # Check if there is a cluster IP associated with this endpoint
-#       clusterIP: true
-#       # Checks if there are endpoints associated to this service or not
-#       endpoints: true
-#       # Check if host port is enabled or not
-#       hostPort: false
-#       # Check if the port is the one that is specified above
-#       ports: true
-# - ttype: deploymentChecks
-#   name: Checks for various aspects of a deployment
-#   description: Allows you to check for various aspects of a deployment
-#   namespace: hos-m2
-#   # Input values for this specific check
-#   values:
-#     # The service name to act on
-#     deploymentName: healthapp-caregaps
-#     checksEnabled:
-#       containers:
-#       - name: healthapp-caregaps-app
-#         # Check if a set of environment variables are present
-#         env:
-#         - name: AUTH_ADDRESS
-#           value: localhost:30004
-#         # image:
-#         #   name: "something*:*"
-#         # healthcheck:
-#         #   value: something
+- ttype: serviceChecks
+  name: Checks for various aspects of a service
+  description: Allows you to check for various aspects of a service
+  namespace: hos-m2
+  # Input values for this specific check
+  values:
+    # The service name to act on
+    serviceName: healthapp-caregaps
+    # Port number to check if the `ports` check is enabled
+    port: 20014
+    checksEnabled:
+      # Check if there is a cluster IP associated with this endpoint
+      clusterIP: true
+      # Checks if there are endpoints associated to this service or not
+      endpoints: true
+      # Check if host port is enabled or not
+      hostPort: false
+      # Check if the port is the one that is specified above
+      ports: true
+- ttype: deploymentChecks
+  name: Checks for various aspects of a deployment
+  description: Allows you to check for various aspects of a deployment
+  namespace: hos-m2
+  # Input values for this specific check
+  values:
+    # The service name to act on
+    deploymentName: healthapp-caregaps
+    checksEnabled:
+      containers:
+      - name: healthapp-caregaps-app
+        # Check if a set of environment variables are present
+        env:
+        - name: AUTH_ADDRESS
+          value: localhost:30004
+        # image:
+        #   name: "something*:*"
+        # healthcheck:
+        #   value: something
 
-#       # Check if a configmap mount is set
-#       configMapMounts:
-#       - foo
-#       - bar
-# - ttype: deploymentChecks
-#   name: Checks that the deployment has 3 contianers
-#   description: Allows you to check for various aspects of a deployment
-#   namespace: hos-m2
-#   # Input values for this specific check
-#   values:
-#     # The service name to act on
-#     deploymentName: healthapp-caregaps
-#     checksEnabled:
-#       containers:
-#       - name: healthapp-caregaps-app
-#       - name: envoy
-#       - name: opa
+      # Check if a configmap mount is set
+      configMapMounts:
+      - foo
+      - bar
+- ttype: deploymentChecks
+  name: Checks that the deployment has 3 contianers
+  description: Allows you to check for various aspects of a deployment
+  namespace: hos-m2
+  # Input values for this specific check
+  values:
+    # The service name to act on
+    deploymentName: healthapp-caregaps
+    checksEnabled:
+      containers:
+      - name: healthapp-caregaps-app
+      - name: envoy
+      - name: opa
 - ttype: podChecks
   name: Checks that the pod is in a running state
   description: Allows you to check for various aspects of a pod
