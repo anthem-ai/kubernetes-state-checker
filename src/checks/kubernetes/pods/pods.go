@@ -81,8 +81,12 @@ func (i inputs) GeneralCheck(kubeClientSet kubernetes.Interface) Results {
 			panic(err.Error())
 		}
 
+		//
 		// Check pod state
+		//
 		for _, inputPod := range values.Values.ChecksEnabled.State {
+
+			didFindContainer := false
 
 			for _, aPod := range pods.Items {
 
@@ -91,106 +95,19 @@ func (i inputs) GeneralCheck(kubeClientSet kubernetes.Interface) Results {
 
 				if match {
 
+					didFindContainer = true
+
 					if inputPod.DesiredState == string(aPod.Status.Phase) {
 						checkResult.DidPass = true
 						checkResult.Message = "* Pod " + aPod.ObjectMeta.Name + " is in " + inputPod.DesiredState + " state\n"
 					}
 				}
+			}
 
+			if !didFindContainer {
+				checkResult.Message = "* Did not find pod: " + inputPod.PodName + "\n"
 			}
 		}
-
-		// deployment, err := kubeClientSet.AppsV1().Deployments(i.namespace).List(context.TODO(), metav1.ListOptions{})
-		// if err != nil {
-		// 	panic(err.Error())
-		// }
-
-		// // Loop through all of the services found
-		// for _, aDeployment := range deployment.Items {
-
-		// 	// Find the deployment we want to look at
-		// 	if aDeployment.ObjectMeta.Name == values.Values.DeploymentName {
-
-		// 		//
-		// 		// Check for envars
-		// 		//
-		// 		// Number of containers to check
-		// 		numberOfContainers := len(values.Values.ChecksEnabled.Containers)
-		// 		numberOfContainersEnvarsFound := 0
-
-		// 		// Loop through the containers in the input values
-		// 		for _, inputContainer := range values.Values.ChecksEnabled.Containers {
-
-		// 			// Find the container in the Deployment
-		// 			for _, container := range aDeployment.Spec.Template.Spec.Containers {
-		// 				if inputContainer.Name == container.Name {
-
-		// 					// The number of envars that should exist
-		// 					numberOfEnvars := len(inputContainer.Env)
-		// 					numberOfEnvarsFound := 0
-
-		// 					// Find the envars in the k8s pod's containers
-		// 					for _, inputContainerEnv := range inputContainer.Env {
-		// 						for _, k8sDeploymentEnv := range container.Env {
-		// 							if inputContainerEnv.Name == k8sDeploymentEnv.Name &&
-		// 								inputContainerEnv.Value == k8sDeploymentEnv.Value {
-		// 								// Found the envar
-		// 								numberOfEnvarsFound++
-		// 							}
-		// 						}
-		// 					}
-
-		// 					if numberOfEnvars > 0 {
-		// 						if numberOfEnvars == numberOfEnvarsFound {
-		// 							// Found the correct amount of envars
-		// 							numberOfContainersEnvarsFound++
-		// 							checkResult.Message += "* Found all envars in Deployment: " + values.Values.DeploymentName + " | container: " + container.Name + "\n"
-		// 						}
-		// 					}
-		// 				}
-		// 			}
-		// 		}
-
-		// 		if numberOfContainers == numberOfContainersEnvarsFound {
-		// 			// Found the envars in all of the input check's envar(s)
-		// 			checkResult.DidPass = true
-		// 		} else {
-		// 			checkResult.DidPass = false
-		// 		}
-
-		// 		//
-		// 		// Check for the the containers that has the `containerMustBePresent` flag set to true
-		// 		//
-		// 		if len(values.Values.ChecksEnabled.Containers) > 0 {
-
-		// 			didFindAllContainers := true
-
-		// 			// Find each container in the deployment based on the user input
-		// 			for _, inputContainer := range values.Values.ChecksEnabled.Containers {
-
-		// 				didFindContainer := false
-
-		// 				// Search for the user inputted container in the deployment
-		// 				for _, container := range aDeployment.Spec.Template.Spec.Containers {
-		// 					if inputContainer.Name == container.Name {
-		// 						didFindContainer = true
-		// 					}
-		// 				}
-
-		// 				if !didFindContainer {
-		// 					didFindAllContainers = false
-		// 				}
-		// 			}
-
-		// 			if didFindAllContainers {
-		// 				checkResult.DidPass = true
-		// 				checkResult.Message += "* Found the correct number of containers in this deployment\n"
-		// 			} else {
-		// 				checkResult.DidPass = false
-		// 			}
-		// 		}
-		// 	}
-		// }
 
 	}
 

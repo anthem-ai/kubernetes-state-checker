@@ -70,7 +70,51 @@ func Test_inputs_GeneralCheck(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{
-			name: "Checking pod state (positive)",
+			name: "Checking pod state - 2 container (positive)",
+			fields: fields{
+				checkName: "check1",
+				namespace: "ns1",
+				valuesYaml: `---
+values:
+  checksEnabled:
+    state:
+    - podName: pod-1-
+      desiredState: Running`,
+			},
+			args: args{
+				// Doc/example: https://gianarb.it/blog/unit-testing-kubernetes-client-in-go
+				kubeClientSet: fake.NewSimpleClientset(&v1.PodList{
+					Items: []v1.Pod{
+						{
+							ObjectMeta: metav1.ObjectMeta{
+								Name:        "pod-1-123abc-abc",
+								Namespace:   "ns1",
+								Annotations: map[string]string{},
+							},
+							Status: v1.PodStatus{
+								Phase: "Running",
+							},
+						},
+						{
+							ObjectMeta: metav1.ObjectMeta{
+								Name:        "pod-2222222-123abc-abc",
+								Namespace:   "ns1",
+								Annotations: map[string]string{},
+							},
+							Status: v1.PodStatus{
+								Phase: "Running",
+							},
+						},
+					},
+				}),
+			},
+			want: Results{
+				DidPass: true,
+				Message: "* Pod pod-1-123abc-abc is in Running state\n",
+			},
+		},
+		{
+			name: "Checking pod state - 1 container (positive)",
 			fields: fields{
 				checkName: "check1",
 				namespace: "ns1",
@@ -101,6 +145,65 @@ values:
 			want: Results{
 				DidPass: true,
 				Message: "* Pod pod-1-123abc-abc is in Running state\n",
+			},
+		},
+		{
+			name: "Checking pod state - no containers found (negative)",
+			fields: fields{
+				checkName: "check1",
+				namespace: "ns1",
+				valuesYaml: `---
+values:
+  checksEnabled:
+    state:
+    - podName: pod-1-
+      desiredState: Running`,
+			},
+			args: args{
+				// Doc/example: https://gianarb.it/blog/unit-testing-kubernetes-client-in-go
+				kubeClientSet: fake.NewSimpleClientset(&v1.PodList{
+					Items: []v1.Pod{},
+				}),
+			},
+			want: Results{
+				DidPass: false,
+				Message: "* Did not find pod: pod-1-\n",
+			},
+		},
+		{
+			name: "Checking pod state - found one container but not another (negative)",
+			fields: fields{
+				checkName: "check1",
+				namespace: "ns1",
+				valuesYaml: `---
+values:
+  checksEnabled:
+    state:
+    - podName: pod-1-
+      desiredState: Running
+    - podName: pod-2-
+      desiredState: Running`,
+			},
+			args: args{
+				// Doc/example: https://gianarb.it/blog/unit-testing-kubernetes-client-in-go
+				kubeClientSet: fake.NewSimpleClientset(&v1.PodList{
+					Items: []v1.Pod{
+						{
+							ObjectMeta: metav1.ObjectMeta{
+								Name:        "pod-1-123abc-abc",
+								Namespace:   "ns1",
+								Annotations: map[string]string{},
+							},
+							Status: v1.PodStatus{
+								Phase: "Running",
+							},
+						},
+					},
+				}),
+			},
+			want: Results{
+				DidPass: false,
+				Message: "* Did not find pod: pod-1-\n",
 			},
 		},
 	}
