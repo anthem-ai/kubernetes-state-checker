@@ -59,3 +59,16 @@ kubernetes-state-checker:
       - name: healthapp-caregaps-app
       - name: envoy
       - name: opa
+- ttype: podChecks
+  name: Checks that the pod is in a running state
+  description: Allows you to check for various aspects of a pod
+  namespace: hos-m2
+  # Input values for this specific check
+  values:
+    checksEnabled:
+      state:
+      # The pod name to act on.  This is a regex field.
+      - podName: healthapp-caregaps-*
+        desiredState: Running
+      - podName: foo
+        desiredState: CrashLoopBackOff
