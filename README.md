@@ -116,6 +116,7 @@ go get k8s.io/client-go/tools/clientcmd
 go get k8s.io/client-go/util/homedir
 go get github.com/evanphx/json-patch
 go get k8s.io/kube-openapi/pkg/util/proto
+go get github.com/olekukonko/tablewriter
 ```
 
 ## Kubeconfig
