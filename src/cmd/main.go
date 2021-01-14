@@ -3,14 +3,15 @@ package main
 import (
 	"checker"
 	"flag"
-	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
 	"reflect"
 	"strconv"
 	"unsafe"
 
+	"github.com/olekukonko/tablewriter"
 	yaml "gopkg.in/yaml.v2"
 
 	"k8s.io/client-go/kubernetes"
@@ -66,6 +67,9 @@ func main() {
 	var c conf
 	c.getConf()
 
+	// Output data
+	outpuData := [][]string{}
+
 	for _, aCheck := range c.KubernetesStateChecker {
 
 		// convert to yaml
@@ -86,14 +90,19 @@ func main() {
 		)
 		results := chk.Run()
 
-		fmt.Println(fmt.Sprintf(`+----------------------+----------------------------------------------------------------------+------+-------------+
-	| Test Type          | Name                                                                 | Pass | Message     |
-	+----------------------+----------------------------------------------------------------------+------+-------------+
-	| %s | %s | %s | %s  |
-	+----------------------+----------------------------------------------------------------------+------+-------------+`,
-			aCheck.Ttype, c.KubernetesStateChecker[0].Name, strconv.FormatBool(results.DidPass), results.Message))
-
+		outpuData = append(outpuData, []string{aCheck.Ttype, c.KubernetesStateChecker[0].Name, strconv.FormatBool(results.DidPass), results.Message})
 	}
+
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"Test Type", "Name", "Status", "Message"})
+	table.SetRowLine(true)
+	table.SetReflowDuringAutoWrap(false)
+	table.SetColWidth(100)
+
+	for _, v := range outpuData {
+		table.Append(v)
+	}
+	table.Render() // Send output
 
 }
 
