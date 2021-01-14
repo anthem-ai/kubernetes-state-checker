@@ -118,6 +118,15 @@ go get github.com/evanphx/json-patch
 go get k8s.io/kube-openapi/pkg/util/proto
 go get github.com/olekukonko/tablewriter
 ```
+## Set go path
+```
+export GOPATH=$GOPATH:$PWD
+```
+
+## Run all unit tests
+```
+go test ./...
+```
 
 ## Kubeconfig
 The `.devcontainer/devcontainer.json` file specifies a local mount from your `$HOME/.kube/config` into the `$HOME/.kube/config` inside the container.
