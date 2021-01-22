@@ -1,9 +1,9 @@
 
 on:
   push:
-    branches: [ "main", "build-release" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main", "build-release" ]
+    branches: [ "main" ]
 
 jobs:
 
