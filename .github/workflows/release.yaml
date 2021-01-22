@@ -92,9 +92,10 @@
 #   #       GOOS: windows
 #   #       # EXTRA_FILES: "LICENSE"
 
-on: 
-  release:
-    types: [created, pull_request]
+on: [pull_request]
+# on:
+#   release:
+#     types: [created]
 
 jobs:
   release-linux-amd64:
