@@ -2,14 +2,16 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"io/ioutil"
-	"github.com/anthem-ai/kubernetes-state-checker/src/checker"
 	"log"
 	"os"
 	"path/filepath"
 	"reflect"
 	"strconv"
 	"unsafe"
+
+	"github.com/anthem-ai/kubernetes-state-checker/src/checker"
 
 	"github.com/olekukonko/tablewriter"
 	yaml "gopkg.in/yaml.v2"
@@ -27,7 +29,14 @@ type conf struct {
 
 func (c *conf) getConf() *conf {
 
-	yamlFile, err := ioutil.ReadFile("conf.yaml")
+	configFileLocation := os.Getenv("KSC_CONFIG")
+
+	if configFileLocation == "" {
+		fmt.Println("ERROR: You must set the environment variable KSC_CONFIG which points to the input config file.")
+		os.Exit(1)
+	}
+
+	yamlFile, err := ioutil.ReadFile(configFileLocation)
 	if err != nil {
 		log.Printf("yamlFile.Get err   #%v ", err)
 	}
