@@ -29,7 +29,7 @@ type conf struct {
 
 func (c *conf) getConf() *conf {
 
-	configFileLocation := os.Getenv("KSCCONFIG")
+	configFileLocation := os.Getenv("KSC_CONFIG")
 
 	if configFileLocation == "" {
 		fmt.Println("ERROR: You must set the environment variable KSCCONFIG which points to the input config file.")
