@@ -32,7 +32,7 @@ func (c *conf) getConf() *conf {
 	configFileLocation := os.Getenv("KSC_CONFIG")
 
 	if configFileLocation == "" {
-		fmt.Println("ERROR: You must set the environment variable KSCCONFIG which points to the input config file.")
+		fmt.Println("ERROR: You must set the environment variable KSC_CONFIG which points to the input config file.")
 		os.Exit(1)
 	}
 
