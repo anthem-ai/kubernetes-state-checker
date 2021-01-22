@@ -1,9 +1,9 @@
 package checker
 
 import (
-	"kubernetes-state-checker/src/checks/kubernetes/deployments"
-	"kubernetes-state-checker/src/checks/kubernetes/pods"
-	"kubernetes-state-checker/src/checks/kubernetes/services"
+	"github.com/anthem-ai/kubernetes-state-checker/src/checks/kubernetes/deployments"
+	"github.com/anthem-ai/kubernetes-state-checker/src/checks/kubernetes/pods"
+	"github.com/anthem-ai/kubernetes-state-checker/src/checks/kubernetes/services"
 
 	"k8s.io/client-go/kubernetes"
 )
