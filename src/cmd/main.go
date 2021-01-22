@@ -1,9 +1,9 @@
 package main
 
 import (
-	"checker"
 	"flag"
 	"io/ioutil"
+	"github.com/anthem-ai/kubernetes-state-checker/src/checker"
 	"log"
 	"os"
 	"path/filepath"
