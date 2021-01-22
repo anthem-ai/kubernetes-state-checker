@@ -27,6 +27,7 @@ jobs:
         GOOS: linux
         # EXTRA_FILES: "LICENSE"
         CMD_PATH: src/cmd/main.go
+        GO111MODULE: off
   # release-linux-arm:
   #   name: release linux/386
   #   runs-on: ubuntu-latest
