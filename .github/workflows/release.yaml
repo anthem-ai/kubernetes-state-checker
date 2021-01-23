@@ -109,3 +109,4 @@ jobs:
         goos: linux
         goarch: amd64
         build_flags: ./src/cmd/main.go
+        ldflags: -X "main.version=v0.0.1"
