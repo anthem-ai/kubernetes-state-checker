@@ -1,3 +1,4 @@
+# Action source: https://github.com/wangyoucao577/go-release-action
 on:
   release:
     types: [created]
