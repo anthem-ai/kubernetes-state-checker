@@ -108,5 +108,5 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: linux
         goarch: amd64
-        project_path: ./src/cmd/main.go
-        # ldflags: -X "main.version=v0.0.1"
+        build_flags: ./src/cmd/main.go
+        ldflags: -extldflags -static -X github.com/chrislusf/seaweedfs/weed/util.COMMIT=foo
