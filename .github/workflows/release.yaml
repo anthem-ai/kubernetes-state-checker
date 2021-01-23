@@ -92,7 +92,7 @@
 #   #       GOOS: windows
 #   #       # EXTRA_FILES: "LICENSE"
 
-on: [pull_request]
+on: [push]
 # on:
 #   release:
 #     types: [created]
