@@ -21,6 +21,15 @@ From a developers point of view, this gives them a tool to check the layers unde
 
 From a DevOps/Infrastructure person’s point of view, this allows them to set up an expected state and enable other groups to check for that.  It also gives this group a tool where they can run to check the state which can help them eliminate what could possibly be wrong and look at other areas that this tool did not cover.
 
+## Use cases
+
+### Is an environment setup correctly?
+If you had a series of checks that represents a correctly setup environment, then you can use those checks and run it against another environment to make sure everything is in place.  If something is not correctly set, then kubernetes-state-checker will output what is not correct.
+
+### Feedback loop from dev to production
+As the developer is developing the application, this person usually knows what the application needs in order for it to function properly and probably have found some hiccups while debugging this application.  The developer can create check(s) very similiar to how they can create unit tests on areas that are known to failures.  Then other teams that are managing other environments can uses these check(s) to make sure their environments are correctly setup.
+
+The check(s) can flow from the other way as well.  Usually in a larger organization, the developers might not be the ones that are taking care of the production systems.  There might be another team for that.  As you run the application(s) in production, you will usually see other operational issues that are not an issue in dev.  This team can also write check(s) for these items so that these issue(s) are detected before it becomes a problem.  With these checks, the other teams including the developers can run it to make sure everything is good and that the assumptions from development to production are adhere to.
 
 ## Example usage
 
