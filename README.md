@@ -98,13 +98,15 @@ kubernetes-state-checker:
 It will ignore all sections and just use the information in the `kubernetes-state-checker` section.
 
 # Running this in VScode
+
 This has the configuration files that helps you bring up the enviroment you need to develop against this locally via a Docker container.
 
 This is based on this example: https://github.com/microsoft/vscode-remote-try-go
 
 You will have to install the `Visual Studio Code Remote - Containers extension`: https://code.visualstudio.com/docs/remote/containers#_getting-started
 
-Once you install this, and restart VScode in this repository, it will ask if you want to open it in a container.  The first time you do this, it will take some time since it is building the container based on the Dockerfile in the `.devcontainer` directory.  After it builds the container, it will open this project inside of this container and you can code away as normal.
+Once you install this, and restart VScode in this repository, it will ask if you want to open it in a container.  The first time you do this, it will take some time since i
+t is building the container based on the Dockerfile in the `.devcontainer` directory.  After it builds the container, it will open this project inside of this container and you can code away as normal.
 
 Install the go dependencies:
 ```
@@ -121,3 +123,11 @@ go get github.com/olekukonko/tablewriter
 
 ## Kubeconfig
 The `.devcontainer/devcontainer.json` file specifies a local mount from your `$HOME/.kube/config` into the `$HOME/.kube/config` inside the container.
+BB
+
+## Tutorial For Windows Users
+If you are using Windows platform, you can download Ubuntu from the Microsoft Store. In this tutorial, we are using Ubuntu 20.04 LTS.
+Once you have Ubuntu ready, follow the link and install Docker in Ubuntu: https://docs.docker.com/engine/install/ubuntu/
+Now that run ```cd /home/<your user>```, and clone the repo here. Run ```ls -l``` to make sure the repo files are here.
+Then run ```cd kubernetes-state-checker```. In this directory, run ```sudo service docker start``` to start your docker.
+The last step is to run ```code .``` which will open up the repo in the container with VScode for you.
