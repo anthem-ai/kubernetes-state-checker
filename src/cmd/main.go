@@ -21,6 +21,9 @@ import (
 	"k8s.io/client-go/util/homedir"
 )
 
+var kubeNamespace string
+var kscConfig string
+
 type conf struct {
 	Some                   string          `yaml:"some"`
 	Random                 int64           `yaml:"random"`
@@ -29,11 +32,19 @@ type conf struct {
 
 func (c *conf) getConf() *conf {
 
-	configFileLocation := os.Getenv("KSC_CONFIG")
+	configFileLocation := ""
 
-	if configFileLocation == "" {
-		fmt.Println("ERROR: You must set the environment variable KSC_CONFIG which points to the input config file.")
-		os.Exit(1)
+	// Input config from CLI flags
+	if kscConfig != "" {
+		configFileLocation = kscConfig
+	} else {
+		// Input config file from environment variable
+		configFileLocation = os.Getenv("KSC_CONFIG")
+
+		if configFileLocation == "" {
+			fmt.Println("ERROR: You must set the environment variable KSC_CONFIG which points to the input config file.")
+			os.Exit(1)
+		}
 	}
 
 	yamlFile, err := ioutil.ReadFile(configFileLocation)
@@ -48,6 +59,16 @@ func (c *conf) getConf() *conf {
 	return c
 }
 
+func init() {
+	// kubernetes namespace override
+	flag.StringVar(&kubeNamespace, "namespace", "", "(optional) to override the namespace value in the input config file")
+	flag.StringVar(&kubeNamespace, "n", "", "(optional) to override the namespace value in the input config file")
+
+	// kubernetes-state-checker input config via cli flag
+	flag.StringVar(&kscConfig, "config", "", "(optional) a flag to set the config file.  Will override the environment variable KSC_CONFIG")
+	flag.StringVar(&kscConfig, "c", "", "(optional) a flag to set the config file.  Will override the environment variable KSC_CONFIG")
+}
+
 func main() {
 
 	// Get kubeconfig
@@ -58,6 +79,8 @@ func main() {
 	} else {
 		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
 	}
+
+	// Parse all flags
 	flag.Parse()
 
 	// use the current context in kubeconfig
@@ -87,6 +110,14 @@ func main() {
 			panic(err.Error())
 		}
 
+		// Use namespace override or not
+		namespace := aCheck.Namespace
+		if kubeNamespace != "" {
+			namespace = kubeNamespace
+			fmt.Println("Setting from input flag")
+		}
+
+
 		// Execute the check runner
 		chk := checker.New(
 			BytesToString(valuesYaml),
@@ -94,7 +125,7 @@ func main() {
 			aCheck.Ttype,
 			aCheck.Name,
 			aCheck.Description,
-			aCheck.Namespace,
+			namespace,
 			aCheck.Values,
 		)
 		results := chk.Run()
