@@ -117,7 +117,6 @@ func main() {
 			fmt.Println("Setting from input flag")
 		}
 
-		fmt.Println(namespace)
 
 		// Execute the check runner
 		chk := checker.New(
