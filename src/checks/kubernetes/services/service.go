@@ -98,6 +98,7 @@ func (i inputs) GeneralCheck(kubeClientSet kubernetes.Interface) Results {
 
 				if values.Values.ChecksEnabled.ClusterIP {
 					if aService.Spec.ClusterIP == "" {
+						checkResult.DidPass = false
 						checkResult.Message += "* No ClusterIP Found\n"
 					} else {
 						checkResult.DidPass = true
@@ -121,13 +122,16 @@ func (i inputs) GeneralCheck(kubeClientSet kubernetes.Interface) Results {
 											checkResult.DidPass = true
 											checkResult.Message += "* Endpoint found: " + anAddress.IP + "\n"
 										} else {
+											checkResult.DidPass = false
 											checkResult.Message += "* No Endpoint found in the Subsets[0].Addresses[x].IP field\n"
 										}
 									}
 								} else {
+									checkResult.DidPass = false
 									checkResult.Message += "* No Endpoint found in the Subsets[0].Addresses list\n"
 								}
 							} else {
+								checkResult.DidPass = false
 								checkResult.Message += "* No Endpoint found in the subsets list\n"
 							}
 						}
@@ -141,6 +145,7 @@ func (i inputs) GeneralCheck(kubeClientSet kubernetes.Interface) Results {
 				if values.Values.ChecksEnabled.Ports {
 					for _, port := range aService.Spec.Ports {
 						if port.Port != values.Values.Port {
+							checkResult.DidPass = false
 							checkResult.Message += "* Port NOT found: " + fmt.Sprint(values.Values.Port) + "\n"
 						} else {
 							checkResult.DidPass = true
