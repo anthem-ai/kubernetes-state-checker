@@ -102,6 +102,8 @@ func main() {
 	// Output data
 	outpuData := [][]string{}
 
+	tmpCounter := 0
+
 	for _, aCheck := range c.KubernetesStateChecker {
 
 		// convert to yaml
@@ -117,7 +119,6 @@ func main() {
 			fmt.Println("Setting from input flag")
 		}
 
-
 		// Execute the check runner
 		chk := checker.New(
 			BytesToString(valuesYaml),
@@ -130,7 +131,9 @@ func main() {
 		)
 		results := chk.Run()
 
-		outpuData = append(outpuData, []string{aCheck.Ttype, c.KubernetesStateChecker[0].Name, strconv.FormatBool(results.DidPass), results.Message})
+		outpuData = append(outpuData, []string{aCheck.Ttype, c.KubernetesStateChecker[tmpCounter].Name, strconv.FormatBool(results.DidPass), results.Message})
+
+		tmpCounter++
 	}
 
 	table := tablewriter.NewWriter(os.Stdout)

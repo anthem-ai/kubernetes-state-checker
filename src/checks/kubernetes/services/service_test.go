@@ -283,6 +283,59 @@ func Test_inputs_GeneralCheck(t *testing.T) {
 				Message: "* Port NOT found: 20014\n",
 			},
 		},
+		{
+			name: "Checking ports (negative) - port doesnt exist",
+			fields: fields{
+				checkName:  "check3",
+				namespace:  "ns1",
+				valuesYaml: "values:\n  serviceName: service1\n  port: 20014\n  checksEnabled:\n      clusterIP: true\n      endpoints: true\n      hostPort: false\n      ports: true",
+			},
+			args: args{
+				// Doc/example: https://gianarb.it/blog/unit-testing-kubernetes-client-in-go
+				kubeClientSet: fake.NewSimpleClientset(&v1.ServiceList{
+					Items: []v1.Service{
+						{
+							ObjectMeta: metav1.ObjectMeta{
+								Name:        "service1",
+								Namespace:   "ns1",
+								Annotations: map[string]string{},
+							},
+							Spec: v1.ServiceSpec{
+								ClusterIP: "1.1.1.1",
+								Ports: []v1.ServicePort{
+									{
+										Port: 20015,
+									},
+								},
+							},
+						},
+					},
+				}, &v1.EndpointsList{
+					Items: []v1.Endpoints{
+						{
+							ObjectMeta: metav1.ObjectMeta{
+								Name:        "service1",
+								Namespace:   "ns1",
+								Annotations: map[string]string{},
+							},
+							Subsets: []v1.EndpointSubset{
+								{
+									Addresses: []v1.EndpointAddress{
+										{
+											IP: "2.2.2.2",
+										},
+									},
+								},
+							},
+						},
+					},
+				}),
+			},
+			want: Results{
+				DidPass: false,
+				Message: "* ClusterIP Found\n* Endpoint found: 2.2.2.2\n* Port NOT found: 20014\n",
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
